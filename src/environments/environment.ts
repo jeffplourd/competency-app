@@ -4,5 +4,9 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  graphcool: {
+    ws: 'wss://subscriptions.us-west-2.graph.cool/v1/cj76ebg5r1g6y0156myese01j',
+    simple: 'https://api.graph.cool/simple/v1/cj76ebg5r1g6y0156myese01j'
+  }
 };

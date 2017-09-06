@@ -1,16 +1,32 @@
-<p>
-  home works!
-</p>
-
-<div cdk-accordion>
-  <md-expansion-panel>
-    <md-expansion-panel-header>
-      <md-panel-title>test title</md-panel-title>
-      <md-panel-description>test expansion panel header 1</md-panel-description>
-    </md-expansion-panel-header>
-    <div>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam dolorum eos excepturi magnam soluta! Aspernatur autem, blanditiis deleniti deserunt distinctio ducimus eaque labore nam, repellendus reprehenderit sunt suscipit, voluptas voluptatum?
-      <button md-button>test button</button>
+<div class="home" fxLayout="column">
+  <md-toolbar color="primary">
+    <span>toolbar title</span>
+  </md-toolbar>
+  <div flex class="body">
+    <div cdk-accordion>
+      <md-expansion-panel *ngFor="let request of currentUserRequests | async">
+        <md-expansion-panel-header>
+          <md-panel-title>{{request.competency.title}}</md-panel-title>
+          <md-panel-description>{{request.message}}</md-panel-description>
+        </md-expansion-panel-header>
+        <div>
+          {{request.description}}
+        </div>
+      </md-expansion-panel>
+      <md-expansion-panel *ngFor="let request of currentUserCompetencies | async">
+        <md-expansion-panel-header>
+          <md-panel-title>{{request.title}}</md-panel-title>
+          <md-panel-description>{{request.description}}</md-panel-description>
+        </md-expansion-panel-header>
+        <div>
+          {{request.description}}
+        </div>
+      </md-expansion-panel>
     </div>
-  </md-expansion-panel>
+    <div fxLayout="row">
+      <button md-button (click)="createCompetency()">create competency</button>
+      <button md-button (click)="createEvaluationRequest()">create evaluation request</button>
+    </div>
+
+  </div>
 </div>
