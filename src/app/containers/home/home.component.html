@@ -2,7 +2,7 @@
   <md-toolbar color="primary">
     <span>toolbar title</span>
   </md-toolbar>
-  <div flex class="body">
+  <div fxFlex class="body">
     <div cdk-accordion>
       <md-expansion-panel *ngFor="let request of currentUserRequests | async">
         <md-expansion-panel-header>
@@ -27,6 +27,10 @@
       <button md-button (click)="createCompetency()">create competency</button>
       <button md-button (click)="createEvaluationRequest()">create evaluation request</button>
     </div>
+
+    <button class="create-competency" md-fab color="accent" (click)="createCompetency()">
+      <i class="material-icons">add</i>
+    </button>
 
   </div>
 </div>

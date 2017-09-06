@@ -5,6 +5,11 @@ import { Observable } from 'rxjs/Observable';
 import { EvaluationRequestService } from '../../services/evaluation-request/evaluation-request.service';
 import { UserService } from '../../services/user/user.service';
 import { CompetencyService } from '../../services/competency/competency.service';
+import { MdDialog } from '@angular/material';
+import { CreateCompetencyDialogComponent } from '../../components/create-competency-dialog/create-competency-dialog.component';
+import { combineLatest } from 'rxjs/observable/combineLatest';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/withLatestFrom';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -57,7 +62,8 @@ export class HomeComponent implements OnInit {
     private apollo: Apollo,
     private evaluationRequestService: EvaluationRequestService,
     private userService: UserService,
-    private competencyService: CompetencyService
+    private competencyService: CompetencyService,
+    private dialog: MdDialog
   ) { }
 
   ngOnInit() {
@@ -93,14 +99,26 @@ export class HomeComponent implements OnInit {
   }
 
   createCompetency() {
-    this.competencyService
-      .create(
-        'test-title',
-        'test-description',
-        'cj77nguwx0kjt011650c5671i'
+    this.dialog
+      .open(
+        CreateCompetencyDialogComponent,
+        { width: '600px' }
       )
+      .afterClosed()
+      .filter((result) => !!result)
+      .withLatestFrom(this.currentUser)
+      .map((data) => {
+        return {
+          title: data[0].title,
+          description: data[0].description,
+          user: data[1]
+        };
+      })
+      .mergeMap(({title, description, user}) => {
+        return this.competencyService.create(title, description, user.id);
+      })
       .subscribe((data) => {
-        console.log('competency created: ', data);
+        console.log('created competency', data);
       });
   }
 

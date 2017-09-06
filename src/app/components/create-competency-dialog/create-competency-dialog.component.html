@@ -1,0 +1,19 @@
+<h2 md-dialog-title>
+  create new competency
+</h2>
+<md-dialog-content>
+  <form [formGroup]="newCompetencyForm" novalidate fxLayout="column">
+    <md-form-field fxFlex class="title">
+      <input mdInput formControlName="title" required placeholder="Title">
+      <md-error>This field is required</md-error>
+    </md-form-field>
+    <md-form-field fxFlex class="description">
+      <textarea mdInput formControlName="description" required placeholder="Description"></textarea>
+      <md-error>This field is required</md-error>
+    </md-form-field>
+  </form>
+</md-dialog-content>
+<md-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+  <button md-button md-dialog-close>cancel</button>
+  <button md-raised-button color="primary" [md-dialog-close]="newCompetencyForm.value">create</button>
+</md-dialog-actions>

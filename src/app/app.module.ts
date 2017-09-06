@@ -8,7 +8,7 @@ import { SigninComponent } from './containers/signin/signin.component';
 import { SignupComponent } from './containers/signup/signup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MdButtonModule, MdExpansionModule, MdInputModule, MdListModule, MdRippleModule,
+  MdButtonModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule, MdRippleModule,
   MdToolbarModule
 } from '@angular/material';
 import { HomeComponent } from './containers/home/home.component';
@@ -17,13 +17,19 @@ import { provideClient } from './apollo';
 import { EvaluationRequestService } from './services/evaluation-request/evaluation-request.service';
 import { UserService } from './services/user/user.service';
 import { CompetencyService } from './services/competency/competency.service';
+import { CreateCompetencyDialogComponent } from './components/create-competency-dialog/create-competency-dialog.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     SigninComponent,
     SignupComponent,
-    HomeComponent
+    HomeComponent,
+    CreateCompetencyDialogComponent
+  ],
+  entryComponents: [
+    CreateCompetencyDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +42,9 @@ import { CompetencyService } from './services/competency/competency.service';
     MdButtonModule,
     MdToolbarModule,
     MdRippleModule,
-    ApolloModule.forRoot(provideClient)
+    MdDialogModule,
+    ApolloModule.forRoot(provideClient),
+    ReactiveFormsModule
   ],
   providers: [
     UserService,
