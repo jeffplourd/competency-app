@@ -19,6 +19,7 @@ import { UserService } from './services/user/user.service';
 import { CompetencyService } from './services/competency/competency.service';
 import { CreateCompetencyDialogComponent } from './components/create-competency-dialog/create-competency-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ExpansionListItemComponent } from './components/expansion-list-item/expansion-list-item.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     SigninComponent,
     SignupComponent,
     HomeComponent,
-    CreateCompetencyDialogComponent
+    CreateCompetencyDialogComponent,
+    ExpansionListItemComponent,
   ],
   entryComponents: [
     CreateCompetencyDialogComponent

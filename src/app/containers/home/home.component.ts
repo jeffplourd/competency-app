@@ -10,6 +10,7 @@ import { CreateCompetencyDialogComponent } from '../../components/create-compete
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
+import { expansionAnimation, ExpansionStates } from '../../components/expansion-animation/expansion-animation';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -37,6 +38,7 @@ const query = gql`
         competency {
           id
           title
+          description
           comments {
             text
           }
@@ -49,7 +51,8 @@ const query = gql`
 @Component({
   selector: 'ca-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  animations: [expansionAnimation]
 })
 export class HomeComponent implements OnInit {
 
@@ -57,6 +60,7 @@ export class HomeComponent implements OnInit {
   currentUser: Observable<any>;
   currentUserCompetencies: Observable<any>;
   currentUserRequests: Observable<any>;
+  activeElementId: string;
 
   constructor(
     private apollo: Apollo,
@@ -133,5 +137,34 @@ export class HomeComponent implements OnInit {
       .subscribe((data) => {
         console.log('evaluation request created: ', data);
       });
+  }
+
+  toggleExpand(elementId) {
+    console.log('toggleExpand', elementId);
+    if (elementId === this.activeElementId) {
+      this.activeElementId = undefined;
+    }
+    else {
+      this.activeElementId = elementId;
+    }
+  }
+
+  requestFeedback(event) {
+    console.log('requestFeedback', event);
+    event.cancelBubble = true;
+  }
+
+  isActiveState(id, index): string {
+    const isActive = id === this.activeElementId;
+
+    if (!isActive) {
+      return ExpansionStates.Inactive;
+    }
+    else if (index === 0) {
+      return ExpansionStates.FirstActive;
+    }
+    else {
+      return ExpansionStates.Active;
+    }
   }
 }

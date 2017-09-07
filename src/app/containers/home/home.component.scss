@@ -1,8 +1,55 @@
 .home {
-  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
 
   .body {
-    background-color: antiquewhite;
+    overflow: auto;
+
+    md-list {
+      margin: 20px 0px;
+      width: 85%;
+      max-width: 840px;
+
+      @media (max-width: 590px) {
+        width: 100%;
+      }
+
+      .list-item-container {
+
+        .list-item-content, .list-item-actions {
+          visibility: hidden;
+        }
+      }
+
+      .list-item-container.active,
+      .list-item-container.firstActive {
+
+        .list-item-content, .list-item-actions {
+          visibility: inherit;
+        }
+      }
+
+      md-list-item {
+        box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.24);
+        background: white;
+
+        .feedback {
+          visibility: hidden;
+        }
+      }
+
+      md-list-item:not(:first-child) {
+        margin-top: 1px;
+      }
+
+      md-list-item:hover {
+        cursor: pointer;
+
+        .feedback {
+          visibility: inherit;
+        }
+      }
+    }
 
     .create-competency {
       position: fixed;

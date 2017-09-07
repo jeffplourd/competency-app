@@ -1,32 +1,31 @@
 <div class="home" fxLayout="column">
-  <md-toolbar color="primary">
+  <md-toolbar fxFlex="none" color="primary">
     <span>toolbar title</span>
   </md-toolbar>
-  <div fxFlex class="body">
-    <div cdk-accordion>
-      <md-expansion-panel *ngFor="let request of currentUserRequests | async">
-        <md-expansion-panel-header>
-          <md-panel-title>{{request.competency.title}}</md-panel-title>
-          <md-panel-description>{{request.message}}</md-panel-description>
-        </md-expansion-panel-header>
-        <div>
-          {{request.description}}
+  <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
+    <md-list>
+      <h3 mdSubheader>Requests for feedback</h3>
+      <div class="list-item-container" *ngFor="let request of currentUserRequests | async; let i = index"
+           [ngClass]="isActiveState(request.id, i)" (click)="toggleExpand(request.id)"
+           [@expansionState]="isActiveState(request.id, i)">
+        <md-list-item>
+          <p fxFlex>{{request.competency.title}}</p>
+          <button class="feedback" md-button (click)="requestFeedback($event)">request feedback</button>
+        </md-list-item>
+        <div class="list-item-content">
+          {{request.competency.description}}
         </div>
-      </md-expansion-panel>
-      <md-expansion-panel *ngFor="let request of currentUserCompetencies | async">
-        <md-expansion-panel-header>
-          <md-panel-title>{{request.title}}</md-panel-title>
-          <md-panel-description>{{request.description}}</md-panel-description>
-        </md-expansion-panel-header>
-        <div>
-          {{request.description}}
+        <div class="list-item-actions">
+          list item actions
         </div>
-      </md-expansion-panel>
-    </div>
-    <div fxLayout="row">
-      <button md-button (click)="createCompetency()">create competency</button>
-      <button md-button (click)="createEvaluationRequest()">create evaluation request</button>
-    </div>
+      </div>
+
+      <h3 mdSubheader>Your competencies</h3>
+      <!--<md-list-item *ngFor="let request of currentUserCompetencies | async" [@expansionState]="isActive(request.id)" (click)="toggleExpand(request.id)">-->
+        <!--<p fxFlex>{{request.title}}</p>-->
+        <!--<button class="feedback" md-button (click)="requestFeedback($event)">request feedback</button>-->
+      <!--</md-list-item>-->
+    </md-list>
 
     <button class="create-competency" md-fab color="accent" (click)="createCompetency()">
       <i class="material-icons">add</i>
