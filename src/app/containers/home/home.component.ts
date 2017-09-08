@@ -11,6 +11,7 @@ import { combineLatest } from 'rxjs/observable/combineLatest';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
 import { expansionAnimation, ExpansionStates } from '../../components/expansion-animation/expansion-animation';
+import { ExpansionListItemComponentConfig } from '../../components/expansion-list-item/expansion-list-item.component';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -167,4 +168,33 @@ export class HomeComponent implements OnInit {
       return ExpansionStates.Active;
     }
   }
+
+  requestListItemConfig(request, index): ExpansionListItemComponentConfig {
+    return {
+      id: request.id,
+      isFirst: index === 0,
+      title: request.competency.title,
+      description: request.competency.description,
+      comments: request.competency.comments
+    };
+  }
+
+  handleCommentSubmitted(comment) {
+    console.log('handleCommentSubmitted', comment);
+  }
+
+  handleHeaderClicked(event) {
+    console.log('handleHeaderClicked', event.elementId);
+    if (event.elementId === this.activeElementId) {
+      this.activeElementId = undefined;
+    }
+    else {
+      this.activeElementId = event.elementId;
+    }
+  }
+
+  handlePrimaryActionClicked(event) {
+    console.log('handlePrimaryActionClicked', event);
+  }
+
 }

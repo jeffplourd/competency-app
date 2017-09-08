@@ -6,8 +6,7 @@
     overflow: auto;
 
     md-list {
-      margin: 20px 0px;
-      width: 85%;
+      width: 80%;
       max-width: 840px;
 
       @media (max-width: 590px) {
@@ -18,6 +17,10 @@
 
         .list-item-content, .list-item-actions {
           visibility: hidden;
+
+          md-card {
+            border-top: 1px solid #e0e0e0;
+          }
         }
       }
 

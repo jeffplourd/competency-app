@@ -8,7 +8,7 @@ import { SigninComponent } from './containers/signin/signin.component';
 import { SignupComponent } from './containers/signup/signup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MdButtonModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule, MdRippleModule,
+  MdButtonModule, MdCardModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule, MdRippleModule,
   MdToolbarModule
 } from '@angular/material';
 import { HomeComponent } from './containers/home/home.component';
@@ -20,6 +20,7 @@ import { CompetencyService } from './services/competency/competency.service';
 import { CreateCompetencyDialogComponent } from './components/create-competency-dialog/create-competency-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ExpansionListItemComponent } from './components/expansion-list-item/expansion-list-item.component';
+import { Autosize } from '../../node_modules/angular2-autosize/angular2-autosize';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ExpansionListItemComponent } from './components/expansion-list-item/exp
     HomeComponent,
     CreateCompetencyDialogComponent,
     ExpansionListItemComponent,
+    Autosize
   ],
   entryComponents: [
     CreateCompetencyDialogComponent
@@ -45,6 +47,7 @@ import { ExpansionListItemComponent } from './components/expansion-list-item/exp
     MdToolbarModule,
     MdRippleModule,
     MdDialogModule,
+    MdCardModule,
     ApolloModule.forRoot(provideClient),
     ReactiveFormsModule
   ],

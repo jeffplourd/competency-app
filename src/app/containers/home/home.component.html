@@ -1,30 +1,23 @@
-<div class="home" fxLayout="column">
+<div class="home" fxLayout="column" fxLayoutAlign="start stretch">
   <md-toolbar fxFlex="none" color="primary">
     <span>toolbar title</span>
   </md-toolbar>
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
-    <md-list>
+    <md-list fxFlex fxLayout="column" fxLayoutAlign="start stretch">
+
+      <div fxFlex="none">dsfdasf</div>
+
       <h3 mdSubheader>Requests for feedback</h3>
-      <div class="list-item-container" *ngFor="let request of currentUserRequests | async; let i = index"
-           [ngClass]="isActiveState(request.id, i)" (click)="toggleExpand(request.id)"
-           [@expansionState]="isActiveState(request.id, i)">
-        <md-list-item>
-          <p fxFlex>{{request.competency.title}}</p>
-          <button class="feedback" md-button (click)="requestFeedback($event)">request feedback</button>
-        </md-list-item>
-        <div class="list-item-content">
-          {{request.competency.description}}
-        </div>
-        <div class="list-item-actions">
-          list item actions
-        </div>
-      </div>
+      <ca-expansion-list-item *ngFor="let request of currentUserRequests | async; let i = index"
+                              [expansionState]="isActiveState(request.id, i)"
+                              [config]="requestListItemConfig(request, i)"
+                              (onPrimaryActionClicked)="handlePrimaryActionClicked($event)"
+                              (onCommentSubmitted)="handleCommentSubmitted(comment)"
+                              (onHeaderClicked)="handleHeaderClicked($event)"></ca-expansion-list-item>
 
       <h3 mdSubheader>Your competencies</h3>
-      <!--<md-list-item *ngFor="let request of currentUserCompetencies | async" [@expansionState]="isActive(request.id)" (click)="toggleExpand(request.id)">-->
-        <!--<p fxFlex>{{request.title}}</p>-->
-        <!--<button class="feedback" md-button (click)="requestFeedback($event)">request feedback</button>-->
-      <!--</md-list-item>-->
+      <!-- competencies -->
+
     </md-list>
 
     <button class="create-competency" md-fab color="accent" (click)="createCompetency()">

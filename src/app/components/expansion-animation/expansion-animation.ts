@@ -1,22 +1,18 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 const inactiveStyles = {
-  backgroundColor: '#eee',
   height: '48px'
 };
 
 const activeStyles = {
   backgroundColor: '#cfd8dc',
-  margin: '50px 0',
-  transform: 'scale(1.1)'
+  margin: '50px -20px 50px -20px',
 };
 
 const firstActiveStyles = {
   ...activeStyles,
-  margin: '6px 0 50px 0'
+  margin: '6px -20px 50px -20px'
 };
-
-console.log('firstActiveStyles', firstActiveStyles);
 
 export const expansionAnimation = trigger('expansionState', [
   state('inactive', style(inactiveStyles)),
