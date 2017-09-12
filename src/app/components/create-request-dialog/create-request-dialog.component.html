@@ -1,0 +1,19 @@
+<h2 md-dialog-title>
+  create request
+</h2>
+<md-dialog-content>
+  <form [formGroup]="newRequestForm" novalidate fxLayout="column">
+    <md-form-field fxFlex class="email">
+      <input mdInput formControlName="email" required placeholder="Email">
+      <md-error>This field is required</md-error>
+    </md-form-field>
+    <md-form-field fxFlex class="message">
+      <textarea mdInput formControlName="message" required placeholder="message"></textarea>
+      <md-error>This field is required</md-error>
+    </md-form-field>
+  </form>
+</md-dialog-content>
+<md-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+  <button md-button md-dialog-close>cancel</button>
+  <button md-raised-button color="primary" [md-dialog-close]="newRequestForm.value">create</button>
+</md-dialog-actions>

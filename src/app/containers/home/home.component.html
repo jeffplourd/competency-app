@@ -5,19 +5,41 @@
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
     <md-list fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 
-      <div fxFlex="none">dsfdasf</div>
-
       <h3 mdSubheader>Requests for feedback</h3>
-      <ca-expansion-list-item *ngFor="let request of currentUserRequests | async; let i = index"
-                              [expansionState]="isActiveState(request.id, i)"
-                              [config]="requestListItemConfig(request, i)"
-                              (onPrimaryActionClicked)="handlePrimaryActionClicked($event)"
-                              (onCommentSubmitted)="handleCommentSubmitted(comment)"
-                              (onHeaderClicked)="handleHeaderClicked($event)"></ca-expansion-list-item>
+      <ca-expansion-panel *ngFor="let request of currentUserRequests | async; let i = index"
+                          [expansionState]="isActiveState(request.id, i)">
+        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
+          <div fxFlex>
+            {{request.competency.title}}
+          </div>
+        </md-list-item>
+        <md-card>
+          {{request.competency.description}}
+        </md-card>
+        <md-card fxLayout="row">
+          <img src="https://lh3.googleusercontent.com/-aqjLGyl1Jdg/AAAAAAAAAAI/AAAAAAAAAAA/APJypA0F3dwhL9RPYeOLpAmQqKKLcJEG6A/s64-c-mo/photo.jpg">
+          <div fxFlex>
+            <textarea autosize placeholder="Enter feedback here"></textarea>
+            <button md-raised-button color="primary" (click)="sendComment()">send</button>
+          </div>
+        </md-card>
+      </ca-expansion-panel>
 
       <h3 mdSubheader>Your competencies</h3>
-      <!-- competencies -->
+      <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"
+                          [expansionState]="isActiveState(competency.id, i)">
 
+        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(competency.id)">
+          <div fxFlex>
+            {{competency.title}}
+          </div>
+          <button class="get-feedback" md-button (click)="createRequestDialog($event)">test button</button>
+        </md-list-item>
+        <md-card>
+          {{competency.description}}
+        </md-card>
+        <div *ngFor="let comment of competency.comments">test1 {{comment.text}}</div>
+      </ca-expansion-panel>
     </md-list>
 
     <button class="create-competency" md-fab color="accent" (click)="createCompetency()">

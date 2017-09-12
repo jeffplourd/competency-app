@@ -56,5 +56,30 @@ export class CompetencyService {
     });
   }
 
+  createComment(competencyId, text) {
+    const mutation = gql`
+      mutation createComment($competencyId: ID!, $text: String) {
+        createComment(
+          competencyId: $competencyId
+          text: $text
+        ) {
+          id
+          text
+          competency {
+            title
+          }
+        }
+      }
+    `;
+
+    return this.apollo.mutate({
+      mutation,
+      variables: {
+        competencyId,
+        text
+      }
+    });
+  }
+
 
 }

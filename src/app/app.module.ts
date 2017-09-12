@@ -19,8 +19,9 @@ import { UserService } from './services/user/user.service';
 import { CompetencyService } from './services/competency/competency.service';
 import { CreateCompetencyDialogComponent } from './components/create-competency-dialog/create-competency-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ExpansionListItemComponent } from './components/expansion-list-item/expansion-list-item.component';
 import { Autosize } from '../../node_modules/angular2-autosize/angular2-autosize';
+import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
+import { CreateRequestDialogComponent } from './components/create-request-dialog/create-request-dialog.component';
 
 @NgModule({
   declarations: [
@@ -29,11 +30,13 @@ import { Autosize } from '../../node_modules/angular2-autosize/angular2-autosize
     SignupComponent,
     HomeComponent,
     CreateCompetencyDialogComponent,
-    ExpansionListItemComponent,
-    Autosize
+    Autosize,
+    ExpansionPanelComponent,
+    CreateRequestDialogComponent
   ],
   entryComponents: [
-    CreateCompetencyDialogComponent
+    CreateCompetencyDialogComponent,
+    CreateRequestDialogComponent
   ],
   imports: [
     BrowserModule,

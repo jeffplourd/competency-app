@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExpansionListItemComponent } from './expansion-list-item.component';
+import { ExpansionPanelComponent } from './expansion-panel.component';
 
-describe('ExpansionListItemComponent', () => {
-  let component: ExpansionListItemComponent;
-  let fixture: ComponentFixture<ExpansionListItemComponent>;
+describe('ExpansionPanelComponent', () => {
+  let component: ExpansionPanelComponent;
+  let fixture: ComponentFixture<ExpansionPanelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExpansionListItemComponent ]
+      declarations: [ ExpansionPanelComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExpansionListItemComponent);
+    fixture = TestBed.createComponent(ExpansionPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

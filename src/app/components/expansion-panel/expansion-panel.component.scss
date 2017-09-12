@@ -1,0 +1,32 @@
+@mixin transition($transition...) {
+  -moz-transition:    $transition;
+  -o-transition:      $transition;
+  -webkit-transition: $transition;
+  transition:         $transition;
+}
+
+.expansion-panel {
+  height: 48px;
+  @include transition(margin 0.2s 0s, height 0.2s 0s);
+
+  .expansion-panel-body {
+    visibility: hidden;
+  }
+}
+
+.expansion-panel.active,
+.expansion-panel.first-active {
+  height: inherit;
+
+  .expansion-panel-body {
+    visibility: visible;
+  }
+}
+
+.expansion-panel.active {
+  margin: 50px -20px 50px -20px;
+}
+
+.expansion-panel.first-active {
+  margin: 6px -20px 50px -20px;
+}

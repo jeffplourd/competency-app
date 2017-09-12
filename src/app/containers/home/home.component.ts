@@ -7,11 +7,10 @@ import { UserService } from '../../services/user/user.service';
 import { CompetencyService } from '../../services/competency/competency.service';
 import { MdDialog } from '@angular/material';
 import { CreateCompetencyDialogComponent } from '../../components/create-competency-dialog/create-competency-dialog.component';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
-import { expansionAnimation, ExpansionStates } from '../../components/expansion-animation/expansion-animation';
-import { ExpansionListItemComponentConfig } from '../../components/expansion-list-item/expansion-list-item.component';
+import { ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
+import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -52,8 +51,7 @@ const query = gql`
 @Component({
   selector: 'ca-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  animations: [expansionAnimation]
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
@@ -169,32 +167,46 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  requestListItemConfig(request, index): ExpansionListItemComponentConfig {
-    return {
-      id: request.id,
-      isFirst: index === 0,
-      title: request.competency.title,
-      description: request.competency.description,
-      comments: request.competency.comments
-    };
+  handleCommentSubmitted(event) {
+    console.log('handleCommentSubmitted', event);
+    this.competencyService
+      .createComment(event.competencyId, event.text)
+      .subscribe((result) => {
+        console.log('added comment', result);
+      });
   }
 
-  handleCommentSubmitted(comment) {
-    console.log('handleCommentSubmitted', comment);
-  }
-
-  handleHeaderClicked(event) {
-    console.log('handleHeaderClicked', event.elementId);
-    if (event.elementId === this.activeElementId) {
+  handleHeaderClicked(elementId) {
+    console.log('handleHeaderClicked', elementId);
+    if (elementId === this.activeElementId) {
       this.activeElementId = undefined;
     }
     else {
-      this.activeElementId = event.elementId;
+      this.activeElementId = elementId;
     }
   }
 
   handlePrimaryActionClicked(event) {
     console.log('handlePrimaryActionClicked', event);
+    event.cancelBubble = true;
+  }
+
+  createRequestDialog(event) {
+    event.cancelBubble = true;
+
+    this.dialog
+      .open(CreateRequestDialogComponent, {
+        width: '600px'
+      })
+      .afterClosed()
+      .filter((result) => !!result)
+      .subscribe((result) => {
+        console.log('createRequestDialog', result);
+      });
+  }
+
+  sendComment() {
+    console.log('sendComment');
   }
 
 }
