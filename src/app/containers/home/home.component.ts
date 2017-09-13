@@ -61,6 +61,7 @@ export class HomeComponent implements OnInit {
   currentUserCompetencies: Observable<any>;
   currentUserRequests: Observable<any>;
   activeElementId: string;
+  feedbackMessage: string;
 
   constructor(
     private apollo: Apollo,
@@ -221,8 +222,11 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  sendComment() {
-    console.log('sendComment');
+  sendComment(competencyId, feedbackMessage) {
+    this.competencyService.createComment(competencyId, feedbackMessage)
+      .subscribe((result) => {
+        console.log('result', result);
+      });
   }
 
   signOut() {

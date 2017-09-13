@@ -18,7 +18,7 @@ import { EvaluationRequestService } from './services/evaluation-request/evaluati
 import { UserService } from './services/user/user.service';
 import { CompetencyService } from './services/competency/competency.service';
 import { CreateCompetencyDialogComponent } from './components/create-competency-dialog/create-competency-dialog.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Autosize } from '../../node_modules/angular2-autosize/angular2-autosize';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from './components/create-request-dialog/create-request-dialog.component';
@@ -53,7 +53,8 @@ import { AuthService } from './services/auth/auth.service';
     MdDialogModule,
     MdCardModule,
     ApolloModule.forRoot(provideClient),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [
     UserService,

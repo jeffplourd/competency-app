@@ -17,11 +17,14 @@
         <md-card>
           {{request.competency.description}}
         </md-card>
+        <md-card *ngFor="let comment of request.competency.comments;">
+          {{comment.text}}
+        </md-card>
         <md-card fxLayout="row">
           <img src="https://lh3.googleusercontent.com/-aqjLGyl1Jdg/AAAAAAAAAAI/AAAAAAAAAAA/APJypA0F3dwhL9RPYeOLpAmQqKKLcJEG6A/s64-c-mo/photo.jpg">
           <div fxFlex>
-            <textarea autosize placeholder="Enter feedback here"></textarea>
-            <button md-raised-button color="primary" (click)="sendComment()">send</button>
+            <textarea autosize placeholder="Enter feedback here" [(ngModel)]="feedbackMessage"></textarea>
+            <button md-raised-button color="primary" (click)="sendComment(request.competency.id, feedbackMessage)">send</button>
           </div>
         </md-card>
       </ca-expansion-panel>
