@@ -1,8 +1,30 @@
-<div class="signup" fxLayout="column">
+<div class="signup" fxLayout="column" fxLayoutAlign="center center">
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate fxLayout="column">
+    <md-form-field>
+      <input formControlName="displayName" mdInput placeholder="Display Name">
+      <md-error *ngIf="signupForm.get('displayName').hasError('required')">
+        Display name is <strong>required</strong>
+      </md-error>
+    </md-form-field>
+    <md-form-field>
+      <input formControlName="email" mdInput placeholder="Email">
+      <md-error *ngIf="signupForm.get('email').hasError('email')">
+        Please enter a valid email address
+      </md-error>
+    </md-form-field>
+    <md-form-field>
+      <input type="password" formControlName="password" mdInput placeholder="Password">
+      <md-error *ngIf="signupForm.get('password').hasError('required')">
+        Password is <strong>required</strong>
+      </md-error>
+    </md-form-field>
+    <button [disabled]="signupForm.invalid" md-raised-button>Sign Up</button>
+  </form>
 
-  <p>
-    signup works!
-  </p>
+  <p>or</p>
 
+  <button md-button routerLink="/signin">Sign In</button>
 
+  <p>Form value: {{ signupForm.value | json }}</p>
+  <p>Form status: {{ signupForm.status }}</p>
 </div>

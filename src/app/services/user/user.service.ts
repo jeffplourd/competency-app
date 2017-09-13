@@ -9,14 +9,19 @@ export class UserService {
 
   constructor(private apollo: Apollo) { }
 
-  create(displayName, competenciesIds, email) {
+  create(email, password, displayName, competenciesIds) {
     return this.apollo.mutate({
       mutation: gql`
-        mutation createUser($competenciesIds: [ID!]!, $displayName: String!, $email: String!) {
+        mutation createUser($email: String!, $password: String!, $displayName: String!, $competenciesIds: [ID!]!) {
           createUser(
-            competenciesIds: $competenciesIds,
+            authProvider: {
+              email: {
+                email: $email,
+                password: $password
+              }
+            },
             displayName: $displayName,
-            email: $email
+            competenciesIds: $competenciesIds
           ) {
             id
             displayName
@@ -25,13 +30,12 @@ export class UserService {
         }
       `,
       variables: {
-        'displayName': 'Jeff Plourd',
-        'competenciesIds': [],
-        'email': 'test@compapp.com'
+        email,
+        password,
+        displayName,
+        competenciesIds
       }
     });
-
-
   }
 
 }

@@ -11,6 +11,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
 import { ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
+import { AuthService } from '../../services/auth/auth.service';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -64,17 +65,18 @@ export class HomeComponent implements OnInit {
   constructor(
     private apollo: Apollo,
     private evaluationRequestService: EvaluationRequestService,
-    private userService: UserService,
     private competencyService: CompetencyService,
-    private dialog: MdDialog
+    private dialog: MdDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
+
     this.data = this.apollo
       .watchQuery({
         query,
         variables: {
-          email: 'jeff@classkick.com'
+          email: this.authService.authData.email
         }
       });
 
@@ -83,8 +85,8 @@ export class HomeComponent implements OnInit {
     });
 
     this.currentUser = this.data.map(({data}) => data.User);
-    this.currentUserCompetencies = this.currentUser.map((user) => user.competencies);
-    this.currentUserRequests = this.currentUser.map((user) => user.evaluationRequestsFromOther);
+    this.currentUserCompetencies = this.currentUser.map((user) => user.competencies).filter((value) => !!value);
+    this.currentUserRequests = this.currentUser.map((user) => user.evaluationRequestsFromOther).filter((value) => !!value);
 
     this.evaluationRequestService.createSubscription().subscribe((data) => {
       console.log('evaluation subscription', data);
@@ -209,4 +211,7 @@ export class HomeComponent implements OnInit {
     console.log('sendComment');
   }
 
+  signOut() {
+    this.authService.signOut();
+  }
 }
