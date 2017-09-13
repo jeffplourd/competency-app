@@ -38,4 +38,24 @@ export class UserService {
     });
   }
 
+  getByEmail(email) {
+    return this.apollo
+      .query({
+          query: gql`
+            query getUserByEmail($email: String!) {
+              User (email: $email) {
+                id
+              }
+            }
+          `,
+          variables: {
+            email
+          }
+        })
+      .map(({data}) => {
+        console.log('data', data);
+        return (data as any).User.id;
+      });
+  }
+
 }

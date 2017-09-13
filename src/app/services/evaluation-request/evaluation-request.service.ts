@@ -2,33 +2,6 @@ import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 
-const create = gql`
-mutation createEvaluationRequest(
-  $competencyId: ID!
-  $evaluateeId: ID!
-  $evaluatorId: ID!
-  $message: String!
-) {
-  createEvaluationRequest(
-    competencyId: $competencyId,
-    evaluateeId: $evaluateeId,
-    evaluatorId: $evaluatorId,
-    message: $message
-  ) {
-    id
-    competency {
-      title
-    }
-    evaluatee {
-      email
-    }
-    evaluator {
-      email
-    }
-  }
-}
-`;
-
 @Injectable()
 export class EvaluationRequestService {
 
@@ -36,7 +9,32 @@ export class EvaluationRequestService {
 
   create(competencyId, evaluateeId, evaluatorId, message) {
     return this.apollo.mutate({
-      mutation: create,
+      mutation: gql`
+        mutation createEvaluationRequest(
+        $competencyId: ID!
+        $evaluateeId: ID!
+        $evaluatorId: ID!
+        $message: String!
+        ) {
+          createEvaluationRequest(
+            competencyId: $competencyId,
+            evaluateeId: $evaluateeId,
+            evaluatorId: $evaluatorId,
+            message: $message
+          ) {
+            id
+            competency {
+              title
+            }
+            evaluatee {
+              email
+            }
+            evaluator {
+              email
+            }
+          }
+        }
+      `,
       variables: {
         competencyId,
         evaluateeId,

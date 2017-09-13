@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ca-create-request-dialog',
   templateUrl: './create-request-dialog.component.html',
   styleUrls: ['./create-request-dialog.component.scss']
 })
-export class CreateRequestDialogComponent implements OnInit {
+export class CreateRequestDialogComponent {
 
-  newRequestForm = new FormGroup({
-    email: new FormControl(),
-    message: new FormControl()
-  });
+  newRequestForm: FormGroup;
 
-  constructor() { }
+  constructor(public formBuilder: FormBuilder) {
+    this.createForm();
+  }
 
-  ngOnInit() {
+  createForm() {
+    this.newRequestForm = this.formBuilder.group({
+      email: ['', Validators.email],
+      message: ['', Validators.required]
+    });
   }
 
 }

@@ -55,8 +55,13 @@ export class AuthService {
   }
 
   signOut() {
-    localStorage.removeItem('graphcool_token');
+    this.reset();
     this.router.navigate(['signin']);
+  }
+
+  reset() {
+    localStorage.removeItem('graphcool_token');
+    this._authData = undefined;
   }
 
   private signUpUser(email, password, displayName) {

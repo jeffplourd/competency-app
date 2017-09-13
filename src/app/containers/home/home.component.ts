@@ -3,7 +3,6 @@ import { Apollo, ApolloQueryObservable } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Observable } from 'rxjs/Observable';
 import { EvaluationRequestService } from '../../services/evaluation-request/evaluation-request.service';
-import { UserService } from '../../services/user/user.service';
 import { CompetencyService } from '../../services/competency/competency.service';
 import { MdDialog } from '@angular/material';
 import { CreateCompetencyDialogComponent } from '../../components/create-competency-dialog/create-competency-dialog.component';
@@ -12,6 +11,7 @@ import 'rxjs/add/operator/withLatestFrom';
 import { ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from '../../services/auth/auth.service';
+import { UserService } from '../../services/user/user.service';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -67,11 +67,12 @@ export class HomeComponent implements OnInit {
     private evaluationRequestService: EvaluationRequestService,
     private competencyService: CompetencyService,
     private dialog: MdDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
-
+    console.log('this.authService.authData', this.authService.authData);
     this.data = this.apollo
       .watchQuery({
         query,
@@ -150,11 +151,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  requestFeedback(event) {
-    console.log('requestFeedback', event);
-    event.cancelBubble = true;
-  }
-
   isActiveState(id, index): string {
     const isActive = id === this.activeElementId;
 
@@ -193,15 +189,33 @@ export class HomeComponent implements OnInit {
     event.cancelBubble = true;
   }
 
-  createRequestDialog(event) {
+  createRequestDialog(event, competency) {
     event.cancelBubble = true;
 
     this.dialog
       .open(CreateRequestDialogComponent, {
-        width: '600px'
+        width: '600px',
+        disableClose: true
       })
       .afterClosed()
       .filter((result) => !!result)
+      .mergeMap(({email, message}) => {
+        return this.userService.getByEmail(email).map((evaluatorId) => {
+          return {
+            evaluatorId,
+            message
+          };
+        });
+      })
+      .mergeMap(({evaluatorId, message}) => {
+        console.log('result', evaluatorId, message);
+        return this.evaluationRequestService.create(
+          competency.id,
+          this.authService.authData.userId,
+          evaluatorId,
+          message
+        );
+      })
       .subscribe((result) => {
         console.log('createRequestDialog', result);
       });
