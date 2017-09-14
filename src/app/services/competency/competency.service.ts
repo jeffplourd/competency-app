@@ -55,13 +55,14 @@ export class CompetencyService {
     });
   }
 
-  createComment(competencyId, text) {
+  createComment(competencyId, text, fromId) {
     return this.apollo.mutate({
       mutation: gql`
-        mutation createComment($competencyId: ID!, $text: String) {
+        mutation createComment($competencyId: ID!, $text: String, $fromId: ID!) {
           createComment(
             competencyId: $competencyId
             text: $text
+            fromId: $fromId
           ) {
             id
             text
@@ -73,7 +74,8 @@ export class CompetencyService {
       `,
       variables: {
         competencyId,
-        text
+        text,
+        fromId
       }
     });
   }

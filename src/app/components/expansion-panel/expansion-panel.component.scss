@@ -21,6 +21,10 @@
   .expansion-panel-body {
     visibility: visible;
   }
+
+  .expansion-panel-header-container {
+    display: none;
+  }
 }
 
 .expansion-panel.active {

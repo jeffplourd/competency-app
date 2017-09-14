@@ -25,6 +25,9 @@ const query = gql`
         comments {
           id
           text
+          from {
+            displayName
+          }
         }
       }
       evaluationRequestsFromOther {
@@ -44,6 +47,9 @@ const query = gql`
           description
           comments {
             text
+            from {
+              displayName
+            }
           }
         }
       }
@@ -182,15 +188,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  handleCommentSubmitted(event) {
-    console.log('handleCommentSubmitted', event);
-    this.competencyService
-      .createComment(event.competencyId, event.text)
-      .subscribe((result) => {
-        console.log('added comment', result);
-      });
-  }
-
   handleHeaderClicked(elementId) {
     console.log('handleHeaderClicked', elementId);
     if (elementId === this.activeElementId) {
@@ -199,11 +196,6 @@ export class HomeComponent implements OnInit {
     else {
       this.activeElementId = elementId;
     }
-  }
-
-  handlePrimaryActionClicked(event) {
-    console.log('handlePrimaryActionClicked', event);
-    event.cancelBubble = true;
   }
 
   createRequestDialog(event, competency) {
@@ -239,7 +231,10 @@ export class HomeComponent implements OnInit {
   }
 
   submitFeedback(competencyId, feedbackMessage, requestId) {
-    this.sendComment(competencyId, feedbackMessage)
+    this.currentUser
+      .mergeMap(({id}) => {
+        return this.sendComment(competencyId, feedbackMessage, id);
+      })
       .mergeMap(() => {
         return this.evaluationRequestService.close(requestId);
       })
@@ -248,9 +243,9 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  sendComment(competencyId, feedbackMessage) {
+  sendComment(competencyId, feedbackMessage, fromId) {
     this.feedbackMessage = '';
-    return this.competencyService.createComment(competencyId, feedbackMessage);
+    return this.competencyService.createComment(competencyId, feedbackMessage, fromId);
   }
 
   signOut() {

@@ -10,7 +10,7 @@
       <ca-expansion-panel *ngFor="let request of currentUserRequests | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
-          <div class="header-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+          <div class="header-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
             {{request.evaluatee.displayName.slice(0,1)}}
           </div>
           <div class="header-name" fxFlex="none">
@@ -19,11 +19,19 @@
           <div fxFlex="none">{{request.competency.title}}</div>
           <div class="header-message" fxFlex>{{request.message}}</div>
         </md-list-item>
+        <md-list-item (click)="handleHeaderClicked(request.id)">
+          <div fxFlex="none">{{request.competency.title}}</div>
+        </md-list-item>
         <md-card>
-          {{request.competency.description}}
+          <ca-competency-card [competency]="request.competency"></ca-competency-card>
         </md-card>
-        <md-card>
-          {{request.message}}
+        <md-card fxLayout="row">
+          <div class="comment-user-circle" fxLayout="row" fxLayoutAlign="center center">
+            {{request.evaluatee.displayName.slice(0,1)}}
+          </div>
+          <div fxFlex fxLayout="column" fxLayoutAlign="center start">
+            {{request.message}}
+          </div>
         </md-card>
         <md-card fxLayout="row">
           <img src="https://lh3.googleusercontent.com/-aqjLGyl1Jdg/AAAAAAAAAAI/AAAAAAAAAAA/APJypA0F3dwhL9RPYeOLpAmQqKKLcJEG6A/s64-c-mo/photo.jpg">
@@ -38,17 +46,25 @@
       <h3 mdSubheader *ngIf="hasCompetencies | async">Your competencies</h3>
       <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"
                           [expansionState]="isActiveState(competency.id, i)">
-
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(competency.id)">
           <div fxFlex>
             {{competency.title}}
           </div>
-          <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>
+          <!--<button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>-->
+        </md-list-item>
+        <md-list-item (click)="handleHeaderClicked(competency.id)">
+          <div fxFlex>
+            {{competency.title}}
+          </div>
         </md-list-item>
         <md-card>
-          {{competency.description}}
+          <ca-competency-card [competency]="competency"></ca-competency-card>
         </md-card>
-        <md-card *ngFor="let comment of competency.comments">{{comment.text}}</md-card>
+        <md-card *ngFor="let comment of competency.comments" fxLayout="column">
+          <div class="sender">{{comment.from ? comment.from.displayName : 'old-name'}}</div>
+          <div>{{comment.text}}</div>
+        </md-card>
+        <!-- ask nicole how it would make sense to ask for feedback -->
       </ca-expansion-panel>
     </md-list>
 

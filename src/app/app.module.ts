@@ -23,6 +23,7 @@ import { Autosize } from '../../node_modules/angular2-autosize/angular2-autosize
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from './components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from './services/auth/auth.service';
+import { CompetencyCardComponent } from './components/competency-card/competency-card.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { AuthService } from './services/auth/auth.service';
     CreateCompetencyDialogComponent,
     Autosize,
     ExpansionPanelComponent,
-    CreateRequestDialogComponent
+    CreateRequestDialogComponent,
+    CompetencyCardComponent
   ],
   entryComponents: [
     CreateCompetencyDialogComponent,
