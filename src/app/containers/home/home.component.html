@@ -6,30 +6,36 @@
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
     <md-list fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 
-      <h3 mdSubheader>Requests for feedback</h3>
+      <h3 mdSubheader *ngIf="hasRequests | async">Requests for feedback</h3>
       <ca-expansion-panel *ngFor="let request of currentUserRequests | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
-          <div fxFlex>
-            {{request.competency.title}}
+          <div class="header-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+            {{request.evaluatee.displayName.slice(0,1)}}
           </div>
+          <div class="header-name" fxFlex="none">
+            {{request.evaluatee.displayName}}
+          </div>
+          <div fxFlex="none">{{request.competency.title}}</div>
+          <div class="header-message" fxFlex>{{request.message}}</div>
         </md-list-item>
         <md-card>
           {{request.competency.description}}
         </md-card>
-        <md-card *ngFor="let comment of request.competency.comments;">
-          {{comment.text}}
+        <md-card>
+          {{request.message}}
         </md-card>
         <md-card fxLayout="row">
           <img src="https://lh3.googleusercontent.com/-aqjLGyl1Jdg/AAAAAAAAAAI/AAAAAAAAAAA/APJypA0F3dwhL9RPYeOLpAmQqKKLcJEG6A/s64-c-mo/photo.jpg">
           <div fxFlex>
             <textarea autosize placeholder="Enter feedback here" [(ngModel)]="feedbackMessage"></textarea>
-            <button md-raised-button color="primary" (click)="sendComment(request.competency.id, feedbackMessage)">send</button>
+            <button md-raised-button color="primary" (click)="submitFeedback(request.competency.id, feedbackMessage, request.id)"
+                    [disabled]="!feedbackMessage">send</button>
           </div>
         </md-card>
       </ca-expansion-panel>
 
-      <h3 mdSubheader>Your competencies</h3>
+      <h3 mdSubheader *ngIf="hasCompetencies | async">Your competencies</h3>
       <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"
                           [expansionState]="isActiveState(competency.id, i)">
 
@@ -37,12 +43,12 @@
           <div fxFlex>
             {{competency.title}}
           </div>
-          <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">test button</button>
+          <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>
         </md-list-item>
         <md-card>
           {{competency.description}}
         </md-card>
-        <div *ngFor="let comment of competency.comments">test1 {{comment.text}}</div>
+        <md-card *ngFor="let comment of competency.comments">{{comment.text}}</md-card>
       </ca-expansion-panel>
     </md-list>
 

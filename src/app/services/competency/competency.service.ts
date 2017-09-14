@@ -37,22 +37,21 @@ export class CompetencyService {
   }
 
   createSubscription() {
-    const query = gql`
-    subscription newCompetencies {
-      Competency(filter: {
-        mutation_in: [CREATED]
-      }) {
-        mutation
-        node {
-          id
-          title
-          description
-        }
-      }
-    }
-    `;
     return this.apollo.subscribe({
-      query
+      query: gql`
+        subscription newCompetencies {
+          Competency(filter: {
+            mutation_in: [CREATED]
+          }) {
+            mutation
+            node {
+              id
+              title
+              description
+            }
+          }
+        }
+      `
     });
   }
 
@@ -79,5 +78,22 @@ export class CompetencyService {
     });
   }
 
+  createCommentSubscription() {
+    return this.apollo.subscribe({
+      query: gql`
+        subscription newComments {
+          Comment(filter: {
+            mutation_in: [CREATED]
+          }) {
+            mutation
+            node {
+              id
+              text
+            }
+          }
+        }
+      `
+    });
+  }
 
 }

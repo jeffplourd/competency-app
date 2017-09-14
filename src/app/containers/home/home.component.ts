@@ -30,8 +30,10 @@ const query = gql`
       evaluationRequestsFromOther {
         id
         message
+        closedAt
         evaluatee {
           email
+          displayName
         }
         evaluator {
           email
@@ -59,7 +61,9 @@ export class HomeComponent implements OnInit {
   data: ApolloQueryObservable<any>;
   currentUser: Observable<any>;
   currentUserCompetencies: Observable<any>;
+  hasCompetencies: Observable<boolean>;
   currentUserRequests: Observable<any>;
+  hasRequests: Observable<boolean>;
   activeElementId: string;
   feedbackMessage: string;
 
@@ -88,20 +92,32 @@ export class HomeComponent implements OnInit {
 
     this.currentUser = this.data.map(({data}) => data.User);
     this.currentUserCompetencies = this.currentUser.map((user) => user.competencies).filter((value) => !!value);
-    this.currentUserRequests = this.currentUser.map((user) => user.evaluationRequestsFromOther).filter((value) => !!value);
+    this.hasCompetencies = this.currentUserCompetencies.map((competencies) => competencies.length > 0);
+    this.currentUserRequests = this.currentUser
+      .map((user) => {
+        return user.evaluationRequestsFromOther.filter((request) => !request.closedAt);
+      });
+    this.hasRequests = this.currentUserRequests.map((requests) => requests.length > 0);
 
     this.evaluationRequestService.createSubscription().subscribe((data) => {
       console.log('evaluation subscription', data);
-      this.data.refetch().then((result) => {
-        console.log('refetch success', result);
-      });
+      this.refetch();
     });
 
     this.competencyService.createSubscription().subscribe((data) => {
       console.log('competency subscription', data);
-      this.data.refetch().then((result) => {
-        console.log('refetch success', result);
-      });
+      this.refetch();
+    });
+
+    this.competencyService.createCommentSubscription().subscribe((data) => {
+      console.log('comment subscription', data);
+      this.refetch();
+    });
+  }
+
+  refetch() {
+    this.data.refetch().then((result) => {
+      console.log('refetch success', result);
     });
   }
 
@@ -222,14 +238,23 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  sendComment(competencyId, feedbackMessage) {
-    this.competencyService.createComment(competencyId, feedbackMessage)
+  submitFeedback(competencyId, feedbackMessage, requestId) {
+    this.sendComment(competencyId, feedbackMessage)
+      .mergeMap(() => {
+        return this.evaluationRequestService.close(requestId);
+      })
       .subscribe((result) => {
         console.log('result', result);
       });
   }
 
+  sendComment(competencyId, feedbackMessage) {
+    this.feedbackMessage = '';
+    return this.competencyService.createComment(competencyId, feedbackMessage);
+  }
+
   signOut() {
     this.authService.signOut();
   }
+
 }

@@ -1,3 +1,5 @@
+@import "../../../variables";
+
 .home {
   min-height: 100vh;
   max-height: 100vh;
@@ -16,6 +18,30 @@
       md-list-item {
         box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.24);
         background: white;
+
+        .header-circle {
+          background-color: #F2F2F2;
+          border-radius: 50%;
+          height: 28px;
+          width: 28px;
+          margin-right: 16px;
+        }
+
+        .header-name {
+          width: 184px;
+        }
+
+        .header-message {
+          color: $secondaryText;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .header-message::before {
+          content: '\2013';
+          margin: 0 .333em;
+        }
 
         .get-feedback {
           visibility: hidden;

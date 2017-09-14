@@ -25,8 +25,16 @@
 
 .expansion-panel.active {
   margin: 50px -20px 50px -20px;
+
+  @media (max-width: 590px) {
+    margin: 0px;
+  }
 }
 
 .expansion-panel.first-active {
   margin: 6px -20px 50px -20px;
+
+  @media (max-width: 590px) {
+    margin: 0px;
+  }
 }

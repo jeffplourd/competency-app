@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 export class ExpansionStates {
 
@@ -21,21 +21,6 @@ export class ExpansionStates {
   templateUrl: './expansion-panel.component.html',
   styleUrls: ['./expansion-panel.component.scss']
 })
-export class ExpansionPanelComponent implements OnInit, OnChanges {
-
+export class ExpansionPanelComponent {
   @Input() expansionState: string;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes) {
-    console.log('ngOnChanges', changes);
-  }
-
-  headerClicked() {
-    console.log('headerClicked');
-  }
-
 }

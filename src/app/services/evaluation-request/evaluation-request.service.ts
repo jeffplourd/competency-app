@@ -46,31 +46,50 @@ export class EvaluationRequestService {
 
   createSubscription() {
     const query = gql`
-    subscription newEvaluationRequests {
-      EvaluationRequest(filter: {
-        mutation_in: [CREATED]
-      }) {
-        mutation
-        node {
-          id
-          evaluatee {
+      subscription newEvaluationRequests {
+        EvaluationRequest(filter: {
+          mutation_in: [CREATED]
+        }) {
+          mutation
+          node {
             id
-            email
-          }
-          evaluator {
-            id
-            email
-          }
-          competency {
-            id
-            title
+            evaluatee {
+              id
+              email
+            }
+            evaluator {
+              id
+              email
+            }
+            competency {
+              id
+              title
+            }
           }
         }
       }
-    }
     `;
     return this.apollo.subscribe({
       query
+    });
+  }
+
+  close(requestId) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation updateEvaluationRequest($requestId: ID!, $closedAt: DateTime) {
+          updateEvaluationRequest(
+            id: $requestId, 
+            closedAt: $closedAt
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        requestId,
+        closedAt: new Date().toISOString()
+      }
     });
   }
 
