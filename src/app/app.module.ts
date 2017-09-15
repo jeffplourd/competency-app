@@ -8,8 +8,10 @@ import { SigninComponent } from './containers/signin/signin.component';
 import { SignupComponent } from './containers/signup/signup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MdButtonModule, MdCardModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule, MdRippleModule,
-  MdToolbarModule
+  MdButtonModule, MdButtonToggleModule, MdCardModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule,
+  MdRippleModule,
+  MdTabsModule,
+  MdToolbarModule, MdTooltipModule
 } from '@angular/material';
 import { HomeComponent } from './containers/home/home.component';
 import { ApolloModule } from 'apollo-angular';
@@ -54,6 +56,9 @@ import { CompetencyCardComponent } from './components/competency-card/competency
     MdRippleModule,
     MdDialogModule,
     MdCardModule,
+    MdTabsModule,
+    MdButtonToggleModule,
+    MdTooltipModule,
     ApolloModule.forRoot(provideClient),
     ReactiveFormsModule,
     FormsModule

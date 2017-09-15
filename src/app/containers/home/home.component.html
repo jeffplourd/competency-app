@@ -4,10 +4,56 @@
     <button md-button (click)="signOut()">sign out</button>
   </md-toolbar>
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
-    <md-list fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 
-      <h3 mdSubheader *ngIf="hasRequests | async">Requests for feedback</h3>
-      <ca-expansion-panel *ngFor="let request of currentUserRequests | async; let i = index"
+    <md-button-toggle-group #group="mdButtonToggleGroup" value="currentUser">
+      <md-button-toggle value="currentUser" mdTooltip="View all of your competencies!" mdTooltipShowDelay="1000" >
+        You
+      </md-button-toggle>
+      <md-button-toggle value="community" mdTooltip="View feedback requests from others!" mdTooltipShowDelay="1000" >
+        Community
+      </md-button-toggle>
+    </md-button-toggle-group>
+
+    <md-list *ngIf="group.value === 'currentUser'" fxFlex fxLayout="column" fxLayoutAlign="start stretch">
+
+      <h3 mdSubheader *ngIf="hasCompletedRequestsForMe | async">New feedback</h3>
+      <div *ngFor="let request of completedRequestsForMe | async">{{request.message}}</div>
+
+      <h3 mdSubheader *ngIf="hasUncompletedRequestsForMe | async">Waiting for feedback</h3>
+      <div *ngFor="let request of uncompletedRequestsForMe | async">-{{request.message}}</div>
+
+      <h3 mdSubheader *ngIf="hasCompetencies | async">Your competencies</h3>
+      <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"
+                          [expansionState]="isActiveState(competency.id, i)">
+        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(competency.id)">
+          <div fxFlex>{{competency.title}}</div>
+          <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>
+        </md-list-item>
+        <md-list-item (click)="handleHeaderClicked(competency.id)">
+          <div fxFlex>
+            {{competency.title}}
+          </div>
+        </md-list-item>
+        <md-card>
+          <ca-competency-card [competency]="competency"></ca-competency-card>
+        </md-card>
+        <md-card *ngFor="let comment of competency.comments" fxLayout="row">
+          <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+            {{comment.from ? comment.from.displayName.slice(0,1) : 'A'}}
+          </div>
+          <div fxLayout="column" fxLayoutAlign="start start">
+            <div class="sender">{{comment.from ? comment.from.displayName : 'old-name'}}</div>
+            <div>{{comment.text}}</div>
+          </div>
+        </md-card>
+        <!-- ask nicole how it would make sense to ask for feedback -->
+      </ca-expansion-panel>
+    </md-list>
+
+    <md-list *ngIf="group.value === 'community'" fxFlex fxLayout="column" fxLayoutAlign="start stretch">
+
+      <h3 mdSubheader *ngIf="hasUncompletedRequestsFromOthers | async">Open Requests for feedback</h3>
+      <ca-expansion-panel *ngFor="let request of uncompletedRequestsFromOthers | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
           <div class="header-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
@@ -34,7 +80,9 @@
           </div>
         </md-card>
         <md-card fxLayout="row">
-          <img src="https://lh3.googleusercontent.com/-aqjLGyl1Jdg/AAAAAAAAAAI/AAAAAAAAAAA/APJypA0F3dwhL9RPYeOLpAmQqKKLcJEG6A/s64-c-mo/photo.jpg">
+          <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+            {{request.evaluator.displayName.slice(0,1)}}
+          </div>
           <div fxFlex>
             <textarea autosize placeholder="Enter feedback here" [(ngModel)]="feedbackMessage"></textarea>
             <button md-raised-button color="primary" (click)="submitFeedback(request.competency.id, feedbackMessage, request.id)"
@@ -43,29 +91,10 @@
         </md-card>
       </ca-expansion-panel>
 
-      <h3 mdSubheader *ngIf="hasCompetencies | async">Your competencies</h3>
-      <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"
-                          [expansionState]="isActiveState(competency.id, i)">
-        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(competency.id)">
-          <div fxFlex>
-            {{competency.title}}
-          </div>
-          <!--<button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>-->
-        </md-list-item>
-        <md-list-item (click)="handleHeaderClicked(competency.id)">
-          <div fxFlex>
-            {{competency.title}}
-          </div>
-        </md-list-item>
-        <md-card>
-          <ca-competency-card [competency]="competency"></ca-competency-card>
-        </md-card>
-        <md-card *ngFor="let comment of competency.comments" fxLayout="column">
-          <div class="sender">{{comment.from ? comment.from.displayName : 'old-name'}}</div>
-          <div>{{comment.text}}</div>
-        </md-card>
-        <!-- ask nicole how it would make sense to ask for feedback -->
-      </ca-expansion-panel>
+      <h3 mdSubheader *ngIf="hasCompletedRequestsFromOthers | async">Completed feedback requests</h3>
+      <div *ngFor="let request of completedRequestsFromOthers | async">{{request.message}}</div>
+
+
     </md-list>
 
     <button class="create-competency" md-fab color="accent" (click)="createCompetency()">

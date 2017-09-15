@@ -77,7 +77,7 @@ export class EvaluationRequestService {
   close(requestId) {
     return this.apollo.mutate({
       mutation: gql`
-        mutation updateEvaluationRequest($requestId: ID!, $closedAt: DateTime) {
+        mutation closeEvaluationRequest($requestId: ID!, $closedAt: DateTime) {
           updateEvaluationRequest(
             id: $requestId, 
             closedAt: $closedAt
@@ -92,5 +92,25 @@ export class EvaluationRequestService {
       }
     });
   }
+
+  complete(requestId) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation completeEvaluationRequest($requestId: ID!, $completedAt: DateTime) {
+          updateEvaluationRequest(
+            id: $requestId,
+            completedAt: $completedAt
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        requestId,
+        completedAt: new Date().toISOString()
+      }
+    });
+  }
+
 
 }

@@ -12,6 +12,7 @@ import { ExpansionStates } from '../../components/expansion-panel/expansion-pane
 import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
+import * as moment from 'moment';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -33,6 +34,34 @@ const query = gql`
       evaluationRequestsFromOther {
         id
         message
+        completedAt
+        viewedAt
+        closedAt
+        evaluatee {
+          email
+          displayName
+        }
+        evaluator {
+          email
+          displayName
+        }
+        competency {
+          id
+          title
+          description
+          comments {
+            text
+            from {
+              displayName
+            }
+          }
+        }
+      }
+      evaluationRequestsForMe {
+        id
+        message
+        completedAt
+        viewedAt
         closedAt
         evaluatee {
           email
@@ -46,10 +75,8 @@ const query = gql`
           title
           description
           comments {
+            id
             text
-            from {
-              displayName
-            }
           }
         }
       }
@@ -68,8 +95,17 @@ export class HomeComponent implements OnInit {
   currentUser: Observable<any>;
   currentUserCompetencies: Observable<any>;
   hasCompetencies: Observable<boolean>;
-  currentUserRequests: Observable<any>;
-  hasRequests: Observable<boolean>;
+
+  uncompletedRequestsFromOthers: Observable<any>;
+  hasUncompletedRequestsFromOthers: Observable<boolean>;
+  completedRequestsFromOthers: Observable<any>;
+  hasCompletedRequestsFromOthers: Observable<boolean>;
+
+  completedRequestsForMe: Observable<any>;
+  hasCompletedRequestsForMe: Observable<boolean>;
+  uncompletedRequestsForMe: Observable<any>;
+  hasUncompletedRequestsForMe: Observable<boolean>;
+
   activeElementId: string;
   feedbackMessage: string;
 
@@ -97,13 +133,49 @@ export class HomeComponent implements OnInit {
     });
 
     this.currentUser = this.data.map(({data}) => data.User);
+
     this.currentUserCompetencies = this.currentUser.map((user) => user.competencies).filter((value) => !!value);
     this.hasCompetencies = this.currentUserCompetencies.map((competencies) => competencies.length > 0);
-    this.currentUserRequests = this.currentUser
+
+    /*** From Others ***/
+    this.uncompletedRequestsFromOthers = this.currentUser
       .map((user) => {
-        return user.evaluationRequestsFromOther.filter((request) => !request.closedAt);
+        const test = user.evaluationRequestsFromOther.filter((request) => !request.completedAt);
+        console.log('test', test);
+        return test;
       });
-    this.hasRequests = this.currentUserRequests.map((requests) => requests.length > 0);
+    this.hasUncompletedRequestsFromOthers = this.uncompletedRequestsFromOthers.map((requests) => requests.length > 0);
+
+    this.completedRequestsFromOthers = this.currentUser
+      .map((user) => {
+        return user.evaluationRequestsFromOther.filter((request) => {
+          console.log('completedRequestsFromOthers', request.completedAt, request.closedAt);
+          return !!request.completedAt && !request.closedAt;
+        });
+      });
+    this.hasCompletedRequestsFromOthers = this.completedRequestsFromOthers.map((requests) => requests.length > 0);
+
+
+    /*** For Me ***/
+    this.completedRequestsForMe = this.currentUser
+      .map((user) => {
+        return user.evaluationRequestsForMe.filter(({completedAt, viewedAt}) => {
+          const completedRequestsForMe = !!completedAt &&
+            (!viewedAt || (viewedAt && moment(viewedAt).isBefore(moment(viewedAt).add(2, 'hours'))));
+          console.log('completedRequestsForMe', completedRequestsForMe);
+          return completedRequestsForMe;
+        });
+      });
+    this.hasCompletedRequestsForMe = this.completedRequestsForMe.map((requests) => requests.length > 0);
+
+    this.uncompletedRequestsForMe = this.currentUser
+      .map((user) => {
+        return user.evaluationRequestsForMe.filter(({completedAt}) => {
+          console.log('uncompletedRequestsForMe', completedAt);
+          return !completedAt;
+        });
+      });
+    this.hasUncompletedRequestsForMe = this.uncompletedRequestsForMe.map((requests) => requests.length > 0);
 
     this.evaluationRequestService.createSubscription().subscribe((data) => {
       console.log('evaluation subscription', data);
@@ -236,7 +308,7 @@ export class HomeComponent implements OnInit {
         return this.sendComment(competencyId, feedbackMessage, id);
       })
       .mergeMap(() => {
-        return this.evaluationRequestService.close(requestId);
+        return this.evaluationRequestService.complete(requestId);
       })
       .subscribe((result) => {
         console.log('result', result);
