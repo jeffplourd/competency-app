@@ -7,6 +7,10 @@
   .body {
     overflow: auto;
 
+    .sub-toolbar {
+      height: 40px;
+    }
+
     md-button-toggle-group {
       margin-top: 20px;
     }

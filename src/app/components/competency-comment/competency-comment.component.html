@@ -1,0 +1,16 @@
+<md-card class="competency-comment" fxLayout="row" [ngClass]="classes">
+  <div class="avatar" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+    {{fromDisplayNameFirstLetter}}
+  </div>
+  <div fxFlex fxLayout="column" fxLayoutAlign="start stretch">
+    <div fxFlex="none" class="header" fxLayout="row">
+      <div fxFlex class="address">
+        {{fromDisplayName || 'test'}}
+      </div>
+      <!-- dropdown icon to signify possibility of expansion-->
+    </div>
+    <p fxFlex class="text">
+      {{comment.text}}
+    </p>
+  </div>
+</md-card>

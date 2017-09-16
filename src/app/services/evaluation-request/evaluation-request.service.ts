@@ -112,5 +112,24 @@ export class EvaluationRequestService {
     });
   }
 
+  view(requestId) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation viewEvaluationRequest($requestId: ID!, $viewedAt: DateTime) {
+          updateEvaluationRequest(
+            id: $requestId,
+            viewedAt: $viewedAt
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        requestId,
+        viewedAt: new Date().toISOString()
+      }
+    });
+  }
+
 
 }

@@ -160,10 +160,10 @@ export class HomeComponent implements OnInit {
     this.completedRequestsForMe = this.currentUser
       .map((user) => {
         return user.evaluationRequestsForMe.filter(({completedAt, viewedAt}) => {
-          const completedRequestsForMe = !!completedAt &&
-            (!viewedAt || (viewedAt && moment(viewedAt).isBefore(moment(viewedAt).add(2, 'hours'))));
-          console.log('completedRequestsForMe', completedRequestsForMe);
-          return completedRequestsForMe;
+          if (!completedAt) {
+            return false;
+          }
+          return !viewedAt || (viewedAt && (moment().diff(moment(viewedAt), 'm') < 5));
         });
       });
     this.hasCompletedRequestsForMe = this.completedRequestsForMe.map((requests) => requests.length > 0);
@@ -303,10 +303,7 @@ export class HomeComponent implements OnInit {
   }
 
   submitFeedback(competencyId, feedbackMessage, requestId) {
-    this.currentUser
-      .mergeMap(({id}) => {
-        return this.sendComment(competencyId, feedbackMessage, id);
-      })
+    return this.sendComment(competencyId, feedbackMessage, this.authService.authData.userId)
       .mergeMap(() => {
         return this.evaluationRequestService.complete(requestId);
       })
@@ -322,6 +319,16 @@ export class HomeComponent implements OnInit {
 
   signOut() {
     this.authService.signOut();
+  }
+
+  markRequestViewed(request) {
+    console.log('markRequestViewed', request);
+
+    if (!request.viewedAt) {
+      this.evaluationRequestService.view(request.id).subscribe(() => {
+        console.log('mark viewed');
+      });
+    }
   }
 
 }

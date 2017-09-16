@@ -5,19 +5,35 @@
   </md-toolbar>
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
 
-    <md-button-toggle-group #group="mdButtonToggleGroup" value="currentUser">
-      <md-button-toggle value="currentUser" mdTooltip="View all of your competencies!" mdTooltipShowDelay="1000" >
-        You
-      </md-button-toggle>
-      <md-button-toggle value="community" mdTooltip="View feedback requests from others!" mdTooltipShowDelay="1000" >
-        Community
-      </md-button-toggle>
-    </md-button-toggle-group>
+    <div fxFlex="none" class="sub-toolbar">
+      <md-button-toggle-group #group="mdButtonToggleGroup" value="currentUser">
+        <md-button-toggle value="currentUser" mdTooltip="View all of your competencies!" mdTooltipShowDelay="1000" >
+          You
+        </md-button-toggle>
+        <md-button-toggle value="community" mdTooltip="View feedback requests from others!" mdTooltipShowDelay="1000" >
+          Community
+        </md-button-toggle>
+      </md-button-toggle-group>
+    </div>
 
     <md-list *ngIf="group.value === 'currentUser'" fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 
       <h3 mdSubheader *ngIf="hasCompletedRequestsForMe | async">New feedback</h3>
-      <div *ngFor="let request of completedRequestsForMe | async">{{request.message}}</div>
+      <ca-expansion-panel *ngFor="let request of completedRequestsForMe | async; let i = index"
+                          [expansionState]="isActiveState(request.id, i)" (opened)="markRequestViewed(request)">
+        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
+          <div fxFlex>{{request.message}}</div>
+        </md-list-item>
+        <md-list-item (click)="handleHeaderClicked(request.id)">
+          <div fxFlex>
+            {{request.message}}
+          </div>
+        </md-list-item>
+        <md-card>
+          <ca-competency-card [competency]="request.competency"></ca-competency-card>
+        </md-card>
+        <ca-competency-comment *ngFor="let comment of request.competency.comments" [comment]="comment" expanded="false"></ca-competency-comment>
+      </ca-expansion-panel>
 
       <h3 mdSubheader *ngIf="hasUncompletedRequestsForMe | async">Waiting for feedback</h3>
       <div *ngFor="let request of uncompletedRequestsForMe | async">-{{request.message}}</div>
@@ -37,16 +53,8 @@
         <md-card>
           <ca-competency-card [competency]="competency"></ca-competency-card>
         </md-card>
-        <md-card *ngFor="let comment of competency.comments" fxLayout="row">
-          <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
-            {{comment.from ? comment.from.displayName.slice(0,1) : 'A'}}
-          </div>
-          <div fxLayout="column" fxLayoutAlign="start start">
-            <div class="sender">{{comment.from ? comment.from.displayName : 'old-name'}}</div>
-            <div>{{comment.text}}</div>
-          </div>
-        </md-card>
-        <!-- ask nicole how it would make sense to ask for feedback -->
+        <ca-competency-comment *ngFor="let comment of competency.comments" [comment]="comment"
+                               expanded="false"></ca-competency-comment>
       </ca-expansion-panel>
     </md-list>
 

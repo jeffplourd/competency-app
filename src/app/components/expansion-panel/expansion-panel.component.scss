@@ -10,7 +10,7 @@
   @include transition(margin 0.2s 0s, height 0.2s 0s);
 
   .expansion-panel-body {
-    visibility: hidden;
+    display: none;
   }
 }
 
@@ -19,7 +19,7 @@
   height: inherit;
 
   .expansion-panel-body {
-    visibility: visible;
+    display: inherit;
   }
 
   .expansion-panel-header-container {

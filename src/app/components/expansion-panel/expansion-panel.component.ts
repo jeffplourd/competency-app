@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 
 export class ExpansionStates {
 
@@ -21,6 +21,17 @@ export class ExpansionStates {
   templateUrl: './expansion-panel.component.html',
   styleUrls: ['./expansion-panel.component.scss']
 })
-export class ExpansionPanelComponent {
+export class ExpansionPanelComponent implements OnChanges {
   @Input() expansionState: string;
+  @Output() opened = new EventEmitter();
+
+  ngOnChanges(change) {
+    const { previousValue, currentValue } = change.expansionState;
+
+    if (previousValue === ExpansionStates.Inactive &&
+      (currentValue === ExpansionStates.Active || currentValue === ExpansionStates.FirstActive)) {
+      this.opened.emit({});
+    }
+  }
+
 }

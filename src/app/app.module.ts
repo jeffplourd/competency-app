@@ -26,6 +26,7 @@ import { ExpansionPanelComponent } from './components/expansion-panel/expansion-
 import { CreateRequestDialogComponent } from './components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from './services/auth/auth.service';
 import { CompetencyCardComponent } from './components/competency-card/competency-card.component';
+import { CompetencyCommentComponent } from './components/competency-comment/competency-comment.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { CompetencyCardComponent } from './components/competency-card/competency
     Autosize,
     ExpansionPanelComponent,
     CreateRequestDialogComponent,
-    CompetencyCardComponent
+    CompetencyCardComponent,
+    CompetencyCommentComponent
   ],
   entryComponents: [
     CreateCompetencyDialogComponent,
