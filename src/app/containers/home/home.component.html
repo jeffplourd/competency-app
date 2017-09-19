@@ -65,7 +65,8 @@
           <md-card fxLayout="row">
             <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">J</div>
             <div fxFlex>
-              <button md-button>test</button>
+              <textarea autosize placeholder="Enter reflection or evidence here" [(ngModel)]="reflectionText"></textarea>
+              <button md-raised-button color="primary" (click)="sendReflectionComment(competency.id, reflectionText)">send</button>
             </div>
           </md-card>
         </ng-template>

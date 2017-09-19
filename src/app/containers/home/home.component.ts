@@ -112,6 +112,7 @@ export class HomeComponent implements OnInit {
 
   activeElementId: string;
   feedbackMessage: string;
+  reflectionText: string;
   showStickyHeader: boolean;
   showStickyFooter: boolean;
 
@@ -258,7 +259,7 @@ export class HomeComponent implements OnInit {
       setTimeout(() => {
         this.setShouldElementShowStickyHeader();
         this.setShouldElementShowStickyFooter();
-      }, 250);
+      }, 350);
     }
   }
 
@@ -295,7 +296,7 @@ export class HomeComponent implements OnInit {
   }
 
   submitFeedback(competencyId, feedbackMessage, requestId) {
-    return this.sendComment(competencyId, feedbackMessage, this.authService.authData.userId)
+    return this.sendFeedbackComment(competencyId, feedbackMessage, this.authService.authData.userId)
       .mergeMap(() => {
         return this.evaluationRequestService.complete(requestId);
       })
@@ -304,9 +305,17 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  sendComment(competencyId, feedbackMessage, fromId) {
+  sendFeedbackComment(competencyId, feedbackMessage, fromId) {
     this.feedbackMessage = '';
     return this.competencyService.createComment(competencyId, feedbackMessage, fromId);
+  }
+
+  sendReflectionComment(competencyId, reflectionText) {
+    this.reflectionText = '';
+    return this.competencyService.createComment(competencyId, reflectionText, this.authService.authData.userId)
+      .subscribe((data) => {
+        console.log('sent reflection comment: ', data);
+      });
   }
 
   signOut() {
@@ -334,8 +343,9 @@ export class HomeComponent implements OnInit {
 
   setShouldElementShowStickyHeader() {
     const activeTemplate = this.stickyTemplates.find((temp) => temp.id === this.activeElementId && !!temp.top);
-    const { top } = activeTemplate && activeTemplate.elementRef.nativeElement.getBoundingClientRect();
-    this.showStickyHeader = top <= 64;
+    const elementRef = activeTemplate && activeTemplate.elementRef;
+    const boundingClientRect = elementRef && elementRef.nativeElement.getBoundingClientRect();
+    this.showStickyHeader = boundingClientRect && boundingClientRect.top <= 64;
   }
 
   shouldElementShowStickyFooter(id) {
@@ -344,7 +354,8 @@ export class HomeComponent implements OnInit {
 
   setShouldElementShowStickyFooter() {
     const activeTemplate = this.stickyTemplates.find((temp) => temp.id === this.activeElementId && !!temp.bottom);
-    const boundingRect = activeTemplate && activeTemplate.elementRef.nativeElement.getBoundingClientRect();
-    this.showStickyFooter = boundingRect.bottom >= this.windowService.nativeWindow.innerHeight;
+    const elementRef = activeTemplate && activeTemplate.elementRef;
+    const boundingRect = elementRef && elementRef.nativeElement.getBoundingClientRect();
+    this.showStickyFooter = boundingRect && boundingRect.bottom >= this.windowService.nativeWindow.innerHeight;
   }
 }
