@@ -3,7 +3,7 @@
     <span>toolbar title</span>
     <button md-button (click)="signOut()">sign out</button>
   </md-toolbar>
-  <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center">
+  <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center" (scroll)="onScroll($event)" >
 
     <div fxFlex="none" class="sub-toolbar">
       <md-button-toggle-group #group="mdButtonToggleGroup" value="currentUser">
@@ -45,16 +45,32 @@
           <div fxFlex>{{competency.title}}</div>
           <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>
         </md-list-item>
-        <md-list-item (click)="handleHeaderClicked(competency.id)">
-          <div fxFlex>
-            {{competency.title}}
-          </div>
-        </md-list-item>
+
+        <ng-template #stickyHeaderTemplate>
+          <md-list-item (click)="handleHeaderClicked(competency.id)">
+            <div fxFlex>
+              {{competency.title}}
+            </div>
+          </md-list-item>
+        </ng-template>
+        <ca-sticky-template [id]="competency.id" [sticky]="shouldElementShowStickyHeader(competency.id)" top="65px"
+                            [stickyTemplate]="stickyHeaderTemplate"></ca-sticky-template>
+
         <md-card>
           <ca-competency-card [competency]="competency"></ca-competency-card>
         </md-card>
         <ca-competency-comment *ngFor="let comment of competency.comments" [comment]="comment"
                                expanded="false"></ca-competency-comment>
+        <ng-template #stickyFooterTemplate>
+          <md-card fxLayout="row">
+            <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">J</div>
+            <div fxFlex>
+              <button md-button>test</button>
+            </div>
+          </md-card>
+        </ng-template>
+        <ca-sticky-template [id]="competency.id" [sticky]="shouldElementShowStickyFooter(competency.id)" bottom="0px"
+                            [stickyTemplate]="stickyFooterTemplate"></ca-sticky-template>
       </ca-expansion-panel>
     </md-list>
 

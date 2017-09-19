@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component, OnInit, ViewChildren, QueryList
+} from '@angular/core';
 import { Apollo, ApolloQueryObservable } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { Observable } from 'rxjs/Observable';
@@ -8,11 +10,13 @@ import { MdDialog } from '@angular/material';
 import { CreateCompetencyDialogComponent } from '../../components/create-competency-dialog/create-competency-dialog.component';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
-import { ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
+import { ExpansionPanelComponent, ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 import * as moment from 'moment';
+import { StickyTemplateComponent } from '../../components/sticky-template/sticky-template.component';
+import { WindowService } from '../../services/window/window.service';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -108,6 +112,10 @@ export class HomeComponent implements OnInit {
 
   activeElementId: string;
   feedbackMessage: string;
+  showStickyHeader: boolean;
+  showStickyFooter: boolean;
+
+  @ViewChildren(StickyTemplateComponent) stickyTemplates: any;
 
   constructor(
     private apollo: Apollo,
@@ -115,11 +123,13 @@ export class HomeComponent implements OnInit {
     private competencyService: CompetencyService,
     private dialog: MdDialog,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private windowService: WindowService
   ) { }
 
   ngOnInit() {
     console.log('this.authService.authData', this.authService.authData);
+
     this.data = this.apollo
       .watchQuery({
         query,
@@ -138,18 +148,14 @@ export class HomeComponent implements OnInit {
     this.hasCompetencies = this.currentUserCompetencies.map((competencies) => competencies.length > 0);
 
     /*** From Others ***/
-    this.uncompletedRequestsFromOthers = this.currentUser
-      .map((user) => {
-        const test = user.evaluationRequestsFromOther.filter((request) => !request.completedAt);
-        console.log('test', test);
-        return test;
-      });
+    this.uncompletedRequestsFromOthers = this.currentUser.map((user) => {
+      return user.evaluationRequestsFromOther.filter((request) => !request.completedAt);
+    });
     this.hasUncompletedRequestsFromOthers = this.uncompletedRequestsFromOthers.map((requests) => requests.length > 0);
 
     this.completedRequestsFromOthers = this.currentUser
       .map((user) => {
         return user.evaluationRequestsFromOther.filter((request) => {
-          console.log('completedRequestsFromOthers', request.completedAt, request.closedAt);
           return !!request.completedAt && !request.closedAt;
         });
       });
@@ -168,13 +174,9 @@ export class HomeComponent implements OnInit {
       });
     this.hasCompletedRequestsForMe = this.completedRequestsForMe.map((requests) => requests.length > 0);
 
-    this.uncompletedRequestsForMe = this.currentUser
-      .map((user) => {
-        return user.evaluationRequestsForMe.filter(({completedAt}) => {
-          console.log('uncompletedRequestsForMe', completedAt);
-          return !completedAt;
-        });
-      });
+    this.uncompletedRequestsForMe = this.currentUser.map((user) => {
+      return user.evaluationRequestsForMe.filter(({completedAt}) => !completedAt);
+    });
     this.hasUncompletedRequestsForMe = this.uncompletedRequestsForMe.map((requests) => requests.length > 0);
 
     this.evaluationRequestService.createSubscription().subscribe((data) => {
@@ -223,19 +225,6 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  createEvaluationRequest() {
-    this.evaluationRequestService
-      .create(
-        'cj7912z2uatv00120705bv66n',
-        'cj77nguwx0kjt011650c5671i',
-        'cj77n324i0iho0116v6obn7ej',
-        'Please give me feedback on my test-competency'
-      )
-      .subscribe((data) => {
-        console.log('evaluation request created: ', data);
-      });
-  }
-
   toggleExpand(elementId) {
     console.log('toggleExpand', elementId);
     if (elementId === this.activeElementId) {
@@ -261,12 +250,15 @@ export class HomeComponent implements OnInit {
   }
 
   handleHeaderClicked(elementId) {
-    console.log('handleHeaderClicked', elementId);
     if (elementId === this.activeElementId) {
       this.activeElementId = undefined;
     }
     else {
       this.activeElementId = elementId;
+      setTimeout(() => {
+        this.setShouldElementShowStickyHeader();
+        this.setShouldElementShowStickyFooter();
+      }, 250);
     }
   }
 
@@ -331,4 +323,28 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  onScroll(event) {
+    this.setShouldElementShowStickyHeader();
+    this.setShouldElementShowStickyFooter();
+  }
+
+  shouldElementShowStickyHeader(id) {
+    return id === this.activeElementId && this.showStickyHeader;
+  }
+
+  setShouldElementShowStickyHeader() {
+    const activeTemplate = this.stickyTemplates.find((temp) => temp.id === this.activeElementId && !!temp.top);
+    const { top } = activeTemplate && activeTemplate.elementRef.nativeElement.getBoundingClientRect();
+    this.showStickyHeader = top <= 64;
+  }
+
+  shouldElementShowStickyFooter(id) {
+    return this.activeElementId === id && this.showStickyFooter;
+  }
+
+  setShouldElementShowStickyFooter() {
+    const activeTemplate = this.stickyTemplates.find((temp) => temp.id === this.activeElementId && !!temp.bottom);
+    const boundingRect = activeTemplate && activeTemplate.elementRef.nativeElement.getBoundingClientRect();
+    this.showStickyFooter = boundingRect.bottom >= this.windowService.nativeWindow.innerHeight;
+  }
 }

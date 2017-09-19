@@ -27,6 +27,8 @@ import { CreateRequestDialogComponent } from './components/create-request-dialog
 import { AuthService } from './services/auth/auth.service';
 import { CompetencyCardComponent } from './components/competency-card/competency-card.component';
 import { CompetencyCommentComponent } from './components/competency-comment/competency-comment.component';
+import { StickyTemplateComponent } from './components/sticky-template/sticky-template.component';
+import { WindowService } from './services/window/window.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { CompetencyCommentComponent } from './components/competency-comment/comp
     ExpansionPanelComponent,
     CreateRequestDialogComponent,
     CompetencyCardComponent,
-    CompetencyCommentComponent
+    CompetencyCommentComponent,
+    StickyTemplateComponent
   ],
   entryComponents: [
     CreateCompetencyDialogComponent,
@@ -69,7 +72,8 @@ import { CompetencyCommentComponent } from './components/competency-comment/comp
     UserService,
     CompetencyService,
     EvaluationRequestService,
-    AuthService
+    AuthService,
+    WindowService
   ],
   bootstrap: [AppComponent]
 })

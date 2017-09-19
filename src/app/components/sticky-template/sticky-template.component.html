@@ -1,0 +1,6 @@
+<ng-template [ngTemplateOutlet]="stickyTemplate"></ng-template>
+
+<div class="sticky" *ngIf="sticky" [ngStyle]="styles">
+  <ng-container [ngTemplateOutlet]="stickyTemplate"></ng-container>
+</div>
+

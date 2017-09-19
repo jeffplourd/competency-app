@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component, ElementRef, EventEmitter, Input, OnChanges, Output
+} from '@angular/core';
 
 export class ExpansionStates {
 
