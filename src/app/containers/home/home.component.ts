@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewChildren, QueryList
+  Component, OnInit, ViewChildren
 } from '@angular/core';
 import { Apollo, ApolloQueryObservable } from 'apollo-angular';
 import gql from 'graphql-tag';
@@ -41,6 +41,12 @@ const query = gql`
         completedAt
         viewedAt
         closedAt
+        comments {
+          text
+          from {
+            displayName
+          }
+        }
         evaluatee {
           email
           displayName
@@ -53,12 +59,6 @@ const query = gql`
           id
           title
           description
-          comments {
-            text
-            from {
-              displayName
-            }
-          }
         }
       }
       evaluationRequestsForMe {
@@ -67,6 +67,12 @@ const query = gql`
         completedAt
         viewedAt
         closedAt
+        comments {
+          text
+          from {
+            displayName
+          }
+        }
         evaluatee {
           email
           displayName
@@ -283,12 +289,17 @@ export class HomeComponent implements OnInit {
       })
       .mergeMap(({evaluatorId, message}) => {
         console.log('result', evaluatorId, message);
-        return this.evaluationRequestService.create(
-          competency.id,
-          this.authService.authData.userId,
-          evaluatorId,
-          message
-        );
+        return this.evaluationRequestService
+          .create(
+            competency.id,
+            this.authService.authData.userId,
+            evaluatorId,
+            [{
+              competencyId: competency.id,
+              text: message,
+              fromId: this.authService.authData.userId
+            }]
+          );
       })
       .subscribe((result) => {
         console.log('createRequestDialog', result);

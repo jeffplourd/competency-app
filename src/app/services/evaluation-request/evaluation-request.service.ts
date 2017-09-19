@@ -7,20 +7,20 @@ export class EvaluationRequestService {
 
   constructor(private apollo: Apollo) { }
 
-  create(competencyId, evaluateeId, evaluatorId, message) {
+  create(competencyId, evaluateeId, evaluatorId, comments) {
     return this.apollo.mutate({
       mutation: gql`
         mutation createEvaluationRequest(
         $competencyId: ID!
         $evaluateeId: ID!
         $evaluatorId: ID!
-        $message: String!
+        $comments: [EvaluationRequestcommentsComment!]
         ) {
           createEvaluationRequest(
             competencyId: $competencyId,
             evaluateeId: $evaluateeId,
             evaluatorId: $evaluatorId,
-            message: $message
+            comments: $comments
           ) {
             id
             competency {
@@ -39,7 +39,7 @@ export class EvaluationRequestService {
         competencyId,
         evaluateeId,
         evaluatorId,
-        message,
+        comments,
       }
     });
   }

@@ -36,7 +36,30 @@
       </ca-expansion-panel>
 
       <h3 mdSubheader *ngIf="hasUncompletedRequestsForMe | async">Waiting for feedback</h3>
-      <div *ngFor="let request of uncompletedRequestsForMe | async">-{{request.message}}</div>
+      <ca-expansion-panel *ngFor="let request of uncompletedRequestsForMe | async; let i = index"
+                          [expansionState]="isActiveState(request.id, i)">
+        <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
+          <div fxFlex>from Jeff - {{request.competency.title}}</div>
+        </md-list-item>
+
+        <ng-template #stickyHeaderTemplate>
+          <md-list-item (click)="handleHeaderClicked(request.id)">
+            <div fxFlex>
+              {{request.competency.title}}
+            </div>
+          </md-list-item>
+        </ng-template>
+        <ca-sticky-template [id]="request.id" [sticky]="shouldElementShowStickyHeader(request.id)" top="65px"
+                            [stickyTemplate]="stickyHeaderTemplate"></ca-sticky-template>
+
+        <md-card>
+          <ca-competency-card [competency]="request.competency"></ca-competency-card>
+        </md-card>
+
+        <ca-competency-comment *ngFor="let comment of request.comments" [comment]="comment"
+                               expanded="false"></ca-competency-comment>
+
+      </ca-expansion-panel>
 
       <h3 mdSubheader *ngIf="hasCompetencies | async">Your competencies</h3>
       <ca-expansion-panel *ngFor="let competency of currentUserCompetencies | async; let i = index"

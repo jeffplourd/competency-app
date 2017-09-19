@@ -1,12 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-export interface CompetencyCommentConfig {
-  id: string;
-  fromDisplayName: string;
-  fromProfile?: string;
-  text: string;
-}
-
 @Component({
   selector: 'ca-competency-comment',
   templateUrl: './competency-comment.component.html',
