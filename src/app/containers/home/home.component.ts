@@ -17,6 +17,7 @@ import { UserService } from '../../services/user/user.service';
 import * as moment from 'moment';
 import { StickyTemplateComponent } from '../../components/sticky-template/sticky-template.component';
 import { WindowService } from '../../services/window/window.service';
+import { Router } from '@angular/router';
 
 const query = gql`
   query getUserByEmail($email: String!) {
@@ -131,10 +132,16 @@ export class HomeComponent implements OnInit {
     private dialog: MdDialog,
     private authService: AuthService,
     private userService: UserService,
-    private windowService: WindowService
+    private windowService: WindowService,
+    private router: Router
   ) { }
 
   ngOnInit() {
+
+    if (!this.authService.isAuthenticated) {
+      this.router.navigate(['signin']);
+    }
+
     console.log('this.authService.authData', this.authService.authData);
 
     this.data = this.apollo

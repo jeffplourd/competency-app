@@ -103,4 +103,9 @@ export class AuthService {
     return this._authData;
   }
 
+  get isAuthenticated() {
+    return !!this.token;
+  }
+
+
 }
