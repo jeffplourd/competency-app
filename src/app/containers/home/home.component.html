@@ -22,17 +22,25 @@
       <ca-expansion-panel *ngFor="let request of completedRequestsForMe | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)" (opened)="markRequestViewed(request)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
-          <div fxFlex>{{request.message}}</div>
+          <div fxFlex>{{request.competency.title}}</div>
         </md-list-item>
-        <md-list-item (click)="handleHeaderClicked(request.id)">
-          <div fxFlex>
-            {{request.message}}
-          </div>
-        </md-list-item>
+
+        <ng-template #stickyHeaderTemplate>
+          <md-list-item (click)="handleHeaderClicked(request.id)">
+            <div fxFlex>
+              {{request.competency.title}}
+            </div>
+          </md-list-item>
+        </ng-template>
+        <ca-sticky-template [id]="request.id" [sticky]="shouldElementShowStickyHeader(request.id)" top="65px"
+                            [stickyTemplate]="stickyHeaderTemplate"></ca-sticky-template>
+
         <md-card>
           <ca-competency-card [competency]="request.competency"></ca-competency-card>
         </md-card>
-        <ca-competency-comment *ngFor="let comment of request.competency.comments" [comment]="comment" expanded="false"></ca-competency-comment>
+
+        <ca-competency-comment *ngFor="let comment of request.comments" [comment]="comment" expanded="false"></ca-competency-comment>
+
       </ca-expansion-panel>
 
       <h3 mdSubheader *ngIf="hasUncompletedRequestsForMe | async">Waiting for feedback</h3>
@@ -113,35 +121,41 @@
           <div fxFlex="none">{{request.competency.title}}</div>
           <div class="header-message" fxFlex>{{request.message}}</div>
         </md-list-item>
-        <md-list-item (click)="handleHeaderClicked(request.id)">
-          <div fxFlex="none">{{request.competency.title}}</div>
-        </md-list-item>
+
+        <ng-template #stickyHeaderTemplate>
+          <md-list-item (click)="handleHeaderClicked(request.id)">
+            <div fxFlex>
+              {{request.competency.title}}
+            </div>
+          </md-list-item>
+        </ng-template>
+        <ca-sticky-template [id]="request.id" [sticky]="shouldElementShowStickyHeader(request.id)" top="65px"
+                            [stickyTemplate]="stickyHeaderTemplate"></ca-sticky-template>
+
         <md-card>
           <ca-competency-card [competency]="request.competency"></ca-competency-card>
         </md-card>
-        <md-card fxLayout="row">
-          <div class="comment-user-circle" fxLayout="row" fxLayoutAlign="center center">
-            {{request.evaluatee.displayName.slice(0,1)}}
-          </div>
-          <div fxFlex fxLayout="column" fxLayoutAlign="center start">
-            {{request.message}}
-          </div>
-        </md-card>
-        <md-card fxLayout="row">
-          <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
-            {{request.evaluator.displayName.slice(0,1)}}
-          </div>
-          <div fxFlex>
-            <textarea autosize placeholder="Enter feedback here" [(ngModel)]="feedbackMessage"></textarea>
-            <button md-raised-button color="primary" (click)="submitFeedback(request.competency.id, feedbackMessage, request.id)"
-                    [disabled]="!feedbackMessage">send</button>
-          </div>
-        </md-card>
+
+        <ca-competency-comment *ngFor="let comment of request.comments" [comment]="comment"
+                               expanded="false"></ca-competency-comment>
+
+        <ng-template #stickyFooterTemplate>
+          <md-card fxLayout="row">
+            <div class="comment-user-circle" fxFlex="none" fxLayout="row" fxLayoutAlign="center center">
+              {{request.evaluator.displayName.slice(0,1)}}
+            </div>
+            <div fxFlex>
+              <textarea autosize placeholder="Enter feedback here" [(ngModel)]="feedbackMessage"></textarea>
+              <button md-raised-button color="primary" (click)="submitFeedback(request.competency.id, feedbackMessage, request.id)">send</button>
+            </div>
+          </md-card>
+        </ng-template>
+        <ca-sticky-template [id]="request.id" [sticky]="shouldElementShowStickyFooter(request.id)" bottom="0px"
+                            [stickyTemplate]="stickyFooterTemplate"></ca-sticky-template>
       </ca-expansion-panel>
 
       <h3 mdSubheader *ngIf="hasCompletedRequestsFromOthers | async">Completed feedback requests</h3>
       <div *ngFor="let request of completedRequestsFromOthers | async">{{request.message}}</div>
-
 
     </md-list>
 

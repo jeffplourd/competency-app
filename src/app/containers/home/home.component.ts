@@ -295,7 +295,6 @@ export class HomeComponent implements OnInit {
         });
       })
       .mergeMap(({evaluatorId, message}) => {
-        console.log('result', evaluatorId, message);
         return this.evaluationRequestService
           .create(
             competency.id,
@@ -314,7 +313,7 @@ export class HomeComponent implements OnInit {
   }
 
   submitFeedback(competencyId, feedbackMessage, requestId) {
-    return this.sendFeedbackComment(competencyId, feedbackMessage, this.authService.authData.userId)
+    return this.sendFeedbackComment(competencyId, feedbackMessage, this.authService.authData.userId, requestId)
       .mergeMap(() => {
         return this.evaluationRequestService.complete(requestId);
       })
@@ -323,14 +322,14 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  sendFeedbackComment(competencyId, feedbackMessage, fromId) {
+  sendFeedbackComment(competencyId, feedbackMessage, fromId, evaluationRequestId) {
     this.feedbackMessage = '';
-    return this.competencyService.createComment(competencyId, feedbackMessage, fromId);
+    return this.competencyService.createComment(competencyId, feedbackMessage, fromId, evaluationRequestId);
   }
 
   sendReflectionComment(competencyId, reflectionText) {
     this.reflectionText = '';
-    return this.competencyService.createComment(competencyId, reflectionText, this.authService.authData.userId)
+    return this.competencyService.createComment(competencyId, reflectionText, this.authService.authData.userId, null)
       .subscribe((data) => {
         console.log('sent reflection comment: ', data);
       });
