@@ -41,7 +41,7 @@ export class CompetencyService {
       query: gql`
         subscription newCompetencies {
           Competency(filter: {
-            mutation_in: [CREATED]
+            mutation_in: [CREATED, DELETED]
           }) {
             mutation
             node {
@@ -97,6 +97,24 @@ export class CompetencyService {
           }
         }
       `
+    });
+  }
+
+  deleteCompetency(competencyId) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation deleteCompetency($competencyId: ID!) {
+          deleteCompetency(id: $competencyId) {
+            id
+            evaluationRequests {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        competencyId
+      }
     });
   }
 

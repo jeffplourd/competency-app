@@ -1,19 +1,43 @@
-<h2 md-dialog-title>
-  create request
+<h2 md-dialog-title fxLayout="row">
+  <div fxFlex>Create Request</div>
+  <button md-icon-button md-dialog-close>
+    <md-icon class="md-24" aria-label="Close create request dialog">close</md-icon>
+  </button>
 </h2>
 <md-dialog-content>
-  <form [formGroup]="newRequestForm" novalidate fxLayout="column">
-    <md-form-field fxFlex class="email">
-      <input mdInput formControlName="email" required placeholder="Email">
-      <md-error>This field is required</md-error>
-    </md-form-field>
-    <md-form-field fxFlex class="message">
-      <textarea mdInput formControlName="message" required placeholder="Message"></textarea>
-      <md-error>This field is required</md-error>
-    </md-form-field>
-  </form>
+  <md-vertical-stepper [linear]="isLinear">
+    <md-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template mdStepLabel>Add email address</ng-template>
+        <md-form-field>
+          <input mdInput placeholder="Email" formControlName="email" required>
+          <md-error>This field is required</md-error>
+        </md-form-field>
+        <div>
+          <button md-button mdStepperNext>Next</button>
+        </div>
+      </form>
+    </md-step>
+    <md-step [stepControl]="secondFormGroup">
+      <form [formGroup]="secondFormGroup">
+        <ng-template mdStepLabel>Add message</ng-template>
+        <md-form-field>
+          <input mdInput placeholder="Message" formControlName="message" required>
+          <md-error>This field is required</md-error>
+        </md-form-field>
+        <div>
+          <button md-button mdStepperPrevious>Back</button>
+          <button md-button mdStepperNext>Next</button>
+        </div>
+      </form>
+    </md-step>
+    <md-step>
+      <ng-template mdStepLabel>Review and send</ng-template>
+      You are now done.
+      <div>
+        <button md-button mdStepperPrevious>Back</button>
+        <button md-raised-button (click)="send()">Send</button>
+      </div>
+    </md-step>
+  </md-vertical-stepper>
 </md-dialog-content>
-<md-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-  <button md-button md-dialog-close>cancel</button>
-  <button md-raised-button color="primary" [md-dialog-close]="newRequestForm.value">create</button>
-</md-dialog-actions>

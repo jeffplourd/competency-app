@@ -22,13 +22,13 @@
       <ca-expansion-panel *ngFor="let request of completedRequestsForMe | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)" (opened)="markRequestViewed(request)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
-          <div fxFlex>{{request.competency.title}}</div>
+          <div fxFlex>{{request.competency ? request.competency.title : 'no title'}}</div>
         </md-list-item>
 
         <ng-template #stickyHeaderTemplate>
           <md-list-item (click)="handleHeaderClicked(request.id)">
             <div fxFlex>
-              {{request.competency.title}}
+              {{request.competency ? request.competency.title : 'no title'}}
             </div>
           </md-list-item>
         </ng-template>
@@ -47,13 +47,13 @@
       <ca-expansion-panel *ngFor="let request of uncompletedRequestsForMe | async; let i = index"
                           [expansionState]="isActiveState(request.id, i)">
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(request.id)">
-          <div fxFlex>from Jeff - {{request.competency.title}}</div>
+          <div fxFlex>from Jeff - {{request.competency ? request.competency.title : 'no title'}}</div>
         </md-list-item>
 
         <ng-template #stickyHeaderTemplate>
           <md-list-item (click)="handleHeaderClicked(request.id)">
             <div fxFlex>
-              {{request.competency.title}}
+              {{request.competency ? request.competency.title : 'no title'}}
             </div>
           </md-list-item>
         </ng-template>
@@ -75,6 +75,15 @@
         <md-list-item class="expansion-panel-header" (click)="handleHeaderClicked(competency.id)">
           <div fxFlex>{{competency.title}}</div>
           <button class="get-feedback" md-button (click)="createRequestDialog($event, competency)">ask for feedback</button>
+          <button md-icon-button [mdMenuTriggerFor]="moreOptionsMenu" (click)="$event.cancelBubble = true">
+            <md-icon>more_vert</md-icon>
+          </button>
+          <md-menu #moreOptionsMenu="mdMenu">
+            <button md-menu-item (click)="deleteCompetency(competency.id)">
+              <md-icon>delete</md-icon>
+              <span>delete</span>
+            </button>
+          </md-menu>
         </md-list-item>
 
         <ng-template #stickyHeaderTemplate>
@@ -118,14 +127,14 @@
           <div class="header-name" fxFlex="none">
             {{request.evaluatee.displayName}}
           </div>
-          <div fxFlex="none">{{request.competency.title}}</div>
+          <div fxFlex="none">{{request.competency ? request.competency.title : 'no title'}}</div>
           <div class="header-message" fxFlex>{{request.message}}</div>
         </md-list-item>
 
         <ng-template #stickyHeaderTemplate>
           <md-list-item (click)="handleHeaderClicked(request.id)">
             <div fxFlex>
-              {{request.competency.title}}
+              {{request.competency ? request.competency.title : 'no title'}}
             </div>
           </md-list-item>
         </ng-template>

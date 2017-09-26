@@ -10,7 +10,10 @@ import { MdDialog } from '@angular/material';
 import { CreateCompetencyDialogComponent } from '../../components/create-competency-dialog/create-competency-dialog.component';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/withLatestFrom';
-import { ExpansionPanelComponent, ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
+import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/debounceTime';
+import { ExpansionStates } from '../../components/expansion-panel/expansion-panel.component';
 import { CreateRequestDialogComponent } from '../../components/create-request-dialog/create-request-dialog.component';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
@@ -32,6 +35,7 @@ const query = gql`
           id
           text
           from {
+            id
             displayName
           }
         }
@@ -43,16 +47,20 @@ const query = gql`
         viewedAt
         closedAt
         comments {
+          id
           text
           from {
+            id
             displayName
           }
         }
         evaluatee {
+          id
           email
           displayName
         }
         evaluator {
+          id
           email
           displayName
         }
@@ -69,16 +77,20 @@ const query = gql`
         viewedAt
         closedAt
         comments {
+          id
           text
           from {
+            id
             displayName
           }
         }
         evaluatee {
+          id
           email
           displayName
         }
         evaluator {
+          id
           email
         }
         competency {
@@ -124,6 +136,8 @@ export class HomeComponent implements OnInit {
   showStickyFooter: boolean;
 
   @ViewChildren(StickyTemplateComponent) stickyTemplates: any;
+
+  openRequestDialog = CreateRequestDialogComponent.open;
 
   constructor(
     private apollo: Apollo,
@@ -193,20 +207,16 @@ export class HomeComponent implements OnInit {
     });
     this.hasUncompletedRequestsForMe = this.uncompletedRequestsForMe.map((requests) => requests.length > 0);
 
-    this.evaluationRequestService.createSubscription().subscribe((data) => {
-      console.log('evaluation subscription', data);
-      this.refetch();
-    });
-
-    this.competencyService.createSubscription().subscribe((data) => {
-      console.log('competency subscription', data);
-      this.refetch();
-    });
-
-    this.competencyService.createCommentSubscription().subscribe((data) => {
-      console.log('comment subscription', data);
-      this.refetch();
-    });
+    this.evaluationRequestService.createSubscription()
+      .merge(
+        this.competencyService.createSubscription(),
+        this.competencyService.createCommentSubscription()
+      )
+      .debounceTime(500)
+      .subscribe((data) => {
+        console.log('Subscription: ', data);
+        this.refetch();
+      });
   }
 
   refetch() {
@@ -279,11 +289,7 @@ export class HomeComponent implements OnInit {
   createRequestDialog(event, competency) {
     event.cancelBubble = true;
 
-    this.dialog
-      .open(CreateRequestDialogComponent, {
-        width: '600px',
-        disableClose: true
-      })
+    this.openRequestDialog(this.dialog)
       .afterClosed()
       .filter((result) => !!result)
       .mergeMap(({email, message}) => {
@@ -295,6 +301,7 @@ export class HomeComponent implements OnInit {
         });
       })
       .mergeMap(({evaluatorId, message}) => {
+        console.log('evaluatorId', evaluatorId);
         return this.evaluationRequestService
           .create(
             competency.id,
@@ -374,5 +381,12 @@ export class HomeComponent implements OnInit {
     const elementRef = activeTemplate && activeTemplate.elementRef;
     const boundingRect = elementRef && elementRef.nativeElement.getBoundingClientRect();
     this.showStickyFooter = boundingRect && boundingRect.bottom >= this.windowService.nativeWindow.innerHeight;
+  }
+
+  deleteCompetency(competencyId) {
+    // should probably also mark related requests as closed
+    this.competencyService.deleteCompetency(competencyId).subscribe(() => {
+      console.log('deleted competency: ', competencyId);
+    });
   }
 }

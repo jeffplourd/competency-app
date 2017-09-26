@@ -9,9 +9,7 @@ import { SignupComponent } from './containers/signup/signup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MdButtonModule, MdButtonToggleModule, MdCardModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule,
-  MdRippleModule,
-  MdTabsModule,
-  MdToolbarModule, MdTooltipModule
+  MdRippleModule, MdStepperModule, MdTabsModule, MdToolbarModule, MdTooltipModule, MdMenuModule, MdIconModule
 } from '@angular/material';
 import { HomeComponent } from './containers/home/home.component';
 import { ApolloModule } from 'apollo-angular';
@@ -66,7 +64,10 @@ import { WindowService } from './services/window/window.service';
     MdTooltipModule,
     ApolloModule.forRoot(provideClient),
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MdStepperModule,
+    MdMenuModule,
+    MdIconModule
   ],
   providers: [
     UserService,
