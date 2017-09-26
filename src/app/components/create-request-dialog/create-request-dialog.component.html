@@ -1,14 +1,14 @@
-<h2 md-dialog-title fxLayout="row">
-  <div fxFlex>Create Request</div>
-  <button md-icon-button md-dialog-close>
-    <md-icon class="md-24" aria-label="Close create request dialog">close</md-icon>
-  </button>
-</h2>
-<md-dialog-content>
-  <md-vertical-stepper [linear]="isLinear">
+<div class="create-request-dialog" fxLayout="column" fxLayoutAlign="start stretch">
+  <h2 md-dialog-title fxLayout="row">
+    <div fxFlex>Create Request</div>
+    <button md-icon-button md-dialog-close>
+      <md-icon class="md-24" aria-label="Close create request dialog">close</md-icon>
+    </button>
+  </h2>
+  <md-horizontal-stepper fxFlex [linear]="isLinear">
     <md-step [stepControl]="firstFormGroup">
-      <form [formGroup]="firstFormGroup">
-        <ng-template mdStepLabel>Add email address</ng-template>
+      <form class="container" [formGroup]="firstFormGroup">
+        <ng-template mdStepLabel>Select evaluator</ng-template>
         <md-form-field>
           <input mdInput placeholder="Email" formControlName="email" required>
           <md-error>This field is required</md-error>
@@ -19,7 +19,7 @@
       </form>
     </md-step>
     <md-step [stepControl]="secondFormGroup">
-      <form [formGroup]="secondFormGroup">
+      <form class="container" [formGroup]="secondFormGroup">
         <ng-template mdStepLabel>Add message</ng-template>
         <md-form-field>
           <input mdInput placeholder="Message" formControlName="message" required>
@@ -32,12 +32,14 @@
       </form>
     </md-step>
     <md-step>
-      <ng-template mdStepLabel>Review and send</ng-template>
-      You are now done.
-      <div>
-        <button md-button mdStepperPrevious>Back</button>
-        <button md-raised-button (click)="send()">Send</button>
+      <div class="container">
+        <ng-template mdStepLabel>Review and send</ng-template>
+        You are now done.
+        <div>
+          <button md-button mdStepperPrevious>Back</button>
+          <button md-raised-button (click)="send()">Send</button>
+        </div>
       </div>
     </md-step>
-  </md-vertical-stepper>
-</md-dialog-content>
+  </md-horizontal-stepper>
+</div>
