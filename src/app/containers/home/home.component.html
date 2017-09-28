@@ -2,6 +2,8 @@
   <md-toolbar fxFlex="none" color="primary">
     <span>Nicole's App :)</span>
     <button md-button (click)="signOut()">sign out</button>
+    <span fxFlex></span>
+    <span>{{ displayName | async }}</span>
   </md-toolbar>
   <div fxFlex class="body" fxLayout="column" fxLayoutAlign="start center" (scroll)="onScroll($event)" >
 

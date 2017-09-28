@@ -7,19 +7,32 @@
   </h2>
   <md-horizontal-stepper fxFlex [linear]="isLinear">
     <md-step [stepControl]="firstFormGroup">
-      <form class="container" [formGroup]="firstFormGroup">
-        <ng-template mdStepLabel>Select evaluator</ng-template>
-        <md-form-field>
-          <input mdInput placeholder="Email" formControlName="email" required>
-          <md-error>This field is required</md-error>
-        </md-form-field>
-        <div>
-          <button md-button mdStepperNext>Next</button>
+      <ng-template mdStepLabel>Select evaluator</ng-template>
+      <form [formGroup]="firstFormGroup" class="container" [ngSwitch]="identifierState" fxLayout="column" fxLayoutAlign="center center">
+        <div *ngSwitchCase="0">
+          <md-spinner></md-spinner>
+        </div>
+        <div *ngSwitchCase="1">
+          <md-form-field>
+            <input mdInput placeholder="Telephone" formControlName="phoneNumber" required>
+            <md-error>This field is required</md-error>
+          </md-form-field>
+        </div>
+        <div *ngSwitchCase="2" fxLayout="column" fxLayoutAlign="center center">
+          Send message to <em>{{displayName}}</em>
+          <button md-button mdStepperNext>Continue</button>
+        </div>
+        <div *ngSwitchCase="3" fxLayout="column" fxLayoutAlign="center center">
+          <md-form-field>
+            <input mdInput placeholder="Name" formControlName="name" required>
+            <md-error>This field is required</md-error>
+          </md-form-field>
+          <button md-button mdStepperNext>next</button>
         </div>
       </form>
     </md-step>
     <md-step [stepControl]="secondFormGroup">
-      <form class="container" [formGroup]="secondFormGroup">
+      <form class="container" [formGroup]="secondFormGroup" fxLayout="column" fxLayoutAlign="center center">
         <ng-template mdStepLabel>Add message</ng-template>
         <md-form-field>
           <input mdInput placeholder="Message" formControlName="message" required>
@@ -32,9 +45,9 @@
       </form>
     </md-step>
     <md-step>
-      <div class="container">
+      <div class="container" fxLayout="column" fxLayoutAlign="center center">
         <ng-template mdStepLabel>Review and send</ng-template>
-        You are now done.
+        <div>Send to: {{displayName}} at {{phoneNumber}}</div>
         <div>
           <button md-button mdStepperPrevious>Back</button>
           <button md-raised-button (click)="send()">Send</button>

@@ -116,6 +116,7 @@ export class HomeComponent implements OnInit {
 
   data: ApolloQueryObservable<any>;
   currentUser: Observable<any>;
+  displayName: Observable<string>;
   currentUserCompetencies: Observable<any>;
   hasCompetencies: Observable<boolean>;
 
@@ -171,6 +172,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.currentUser = this.data.map(({data}) => data.User);
+    this.displayName = this.currentUser.map((user) => user.displayName);
 
     this.currentUserCompetencies = this.currentUser.map((user) => user.competencies).filter((value) => !!value);
     this.hasCompetencies = this.currentUserCompetencies.map((competencies) => competencies.length > 0);
@@ -292,27 +294,13 @@ export class HomeComponent implements OnInit {
     this.openRequestDialog(this.dialog)
       .afterClosed()
       .filter((result) => !!result)
-      .mergeMap(({email, message}) => {
-        return this.userService.getByEmail(email).map((evaluatorId) => {
-          return {
-            evaluatorId,
-            message
-          };
-        });
-      })
       .mergeMap(({evaluatorId, message}) => {
-        console.log('evaluatorId', evaluatorId);
-        return this.evaluationRequestService
-          .create(
-            competency.id,
-            this.authService.authData.userId,
-            evaluatorId,
-            [{
-              competencyId: competency.id,
-              text: message,
-              fromId: this.authService.authData.userId
-            }]
-          );
+        return this.evaluationRequestService.createRequest(
+          competency.id,
+          this.authService.authData.userId,
+          evaluatorId,
+          message
+        );
       })
       .subscribe((result) => {
         console.log('createRequestDialog', result);
@@ -388,5 +376,16 @@ export class HomeComponent implements OnInit {
     this.competencyService.deleteCompetency(competencyId).subscribe(() => {
       console.log('deleted competency: ', competencyId);
     });
+  }
+
+  createAnonUser() {
+    this.userService.createAnon()
+      .mergeMap(({data}) => {
+        const authenticateAnonymousUser = (data as any).authenticateAnonymousUser;
+        return this.userService.updatePhoneNumber(authenticateAnonymousUser.id, '8587778888');
+      })
+      .subscribe((result) => {
+        console.log('createAnon', result);
+      });
   }
 }

@@ -1,6 +1,14 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MdDialogRef } from '@angular/material';
+import { UserService } from '../../services/user/user.service';
+
+enum IdentifierStates {
+  Loading,
+  NeedsInput,
+  KnownUser,
+  AnonUser
+}
 
 @Component({
   selector: 'ca-create-request-dialog',
@@ -9,9 +17,11 @@ import { MdDialogRef } from '@angular/material';
 })
 export class CreateRequestDialogComponent {
 
-  newRequestForm: FormGroup;
-
   isLinear = true;
+  evaluatorId;
+  displayName;
+  phoneNumber;
+  identifierState: IdentifierStates = IdentifierStates.NeedsInput;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -24,34 +34,55 @@ export class CreateRequestDialogComponent {
 
   constructor(
     public formBuilder: FormBuilder,
-    public dialogRef: MdDialogRef<CreateRequestDialogComponent>
+    public dialogRef: MdDialogRef<CreateRequestDialogComponent>,
+    public userService: UserService
   ) {
     this.createForm();
   }
 
   createForm() {
-    // this.newRequestForm = this.formBuilder.group({
-    //   email: ['', Validators.email],
-    //   message: ['', Validators.required]
-    // });
 
     this.firstFormGroup = this.formBuilder.group({
-      email: ['', Validators.email]
+      phoneNumber: ['', Validators.required],
+      name: ''
     });
 
     this.secondFormGroup = this.formBuilder.group({
       message: ['', Validators.required]
     });
+
+    this.firstFormGroup
+      .valueChanges
+      .subscribe(({phoneNumber}) => {
+        if (phoneNumber.length === 10) {
+          console.log('check');
+          this.phoneNumber = phoneNumber;
+          this.identifierState = IdentifierStates.Loading;
+          this.userService.getByPhoneNumber(phoneNumber)
+            .subscribe(({id, displayName}) => {
+              if (id) {
+                this.evaluatorId = id;
+                this.displayName = displayName;
+                this.identifierState = IdentifierStates.KnownUser;
+              }
+              else {
+                this.identifierState = IdentifierStates.AnonUser;
+              }
+            });
+        }
+        console.log('value changed: ', phoneNumber);
+      });
+  }
+
+  verifyNumber(phoneNumber) {
+    return this.userService.getByPhoneNumber(phoneNumber);
   }
 
   send() {
-    console.log({
-      ...this.firstFormGroup.value,
-      ...this.secondFormGroup.value
-    });
     this.dialogRef.close({
       ...this.firstFormGroup.value,
-      ...this.secondFormGroup.value
+      ...this.secondFormGroup.value,
+      evaluatorId: this.evaluatorId
     });
   }
 }

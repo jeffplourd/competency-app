@@ -9,7 +9,8 @@ import { SignupComponent } from './containers/signup/signup.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MdButtonModule, MdButtonToggleModule, MdCardModule, MdDialogModule, MdExpansionModule, MdInputModule, MdListModule,
-  MdRippleModule, MdStepperModule, MdTabsModule, MdToolbarModule, MdTooltipModule, MdMenuModule, MdIconModule
+  MdRippleModule, MdStepperModule, MdTabsModule, MdToolbarModule, MdTooltipModule, MdMenuModule, MdIconModule,
+  MdProgressSpinnerModule
 } from '@angular/material';
 import { HomeComponent } from './containers/home/home.component';
 import { ApolloModule } from 'apollo-angular';
@@ -27,6 +28,7 @@ import { CompetencyCardComponent } from './components/competency-card/competency
 import { CompetencyCommentComponent } from './components/competency-comment/competency-comment.component';
 import { StickyTemplateComponent } from './components/sticky-template/sticky-template.component';
 import { WindowService } from './services/window/window.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -67,7 +69,9 @@ import { WindowService } from './services/window/window.service';
     FormsModule,
     MdStepperModule,
     MdMenuModule,
-    MdIconModule
+    MdIconModule,
+    MdProgressSpinnerModule,
+    HttpClientModule
   ],
   providers: [
     UserService,

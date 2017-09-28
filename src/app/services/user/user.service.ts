@@ -58,4 +58,61 @@ export class UserService {
       });
   }
 
+  getByPhoneNumber(phoneNumber) {
+    return this.apollo
+      .query({
+        query: gql`
+          query getUserByPhoneNumber($phoneNumber: String!) {
+            User (phoneNumber: $phoneNumber) {
+              id
+              displayName
+            }
+          }
+        `,
+        variables: {
+          phoneNumber
+        }
+      })
+    .map(({data}) => {
+      return data && (data as any).User;
+    });
+  }
+
+  createAnon() {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation authenticateAnonymousUser($secret: String!) {
+          authenticateAnonymousUser(
+            secret: $secret
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        secret: 'supersecret'
+      }
+    });
+  }
+
+  updatePhoneNumber(id, phoneNumber) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation updateUserPhoneNumber($id: ID!, $phoneNumber: String!) {
+          updateUser(
+            id: $id,
+            phoneNumber: $phoneNumber
+          ) {
+            id
+            phoneNumber
+          }
+        }
+      `,
+      variables: {
+        id,
+        phoneNumber
+      }
+    });
+  }
+
 }

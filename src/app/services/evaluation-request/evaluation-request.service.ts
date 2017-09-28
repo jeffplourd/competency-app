@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class EvaluationRequestService {
 
-  constructor(private apollo: Apollo) { }
+  constructor(
+    private apollo: Apollo,
+    private http: HttpClient
+  ) { }
 
   create(competencyId, evaluateeId, evaluatorId, comments) {
     return this.apollo.mutate({
@@ -129,6 +134,13 @@ export class EvaluationRequestService {
         viewedAt: new Date().toISOString()
       }
     });
+  }
+
+  createRequest(competencyId, evaluateeId, evaluatorId, message) {
+    return this.http.post(
+      `${environment.firebase.functionsUrl}/evaluation-request`,
+      { competencyId, evaluateeId, evaluatorId, message }
+    );
   }
 
 
