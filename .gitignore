@@ -45,3 +45,4 @@ Thumbs.db
 
 # Firebase Functions
 /functions/node_modules/
+firebase-debug.log
